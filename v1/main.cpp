@@ -11,16 +11,24 @@ A Demo of a simple tcp server which parse 1 json string a time.
 #include "tool.h"
 #include "app.h"
 using namespace std;
+
+LogFile Tool1::log_file1;
+
+
 void handle_cmd()
 {
     string str="123";
-    //    while(1){
-    //        cout<<"abc\n";fflush(stdout);
-    //        cin>>str;
-    //        cout<<str+"111"<<endl;fflush(stdout);
-    //        str="";
-    //    //    system(str.data());
-    //    }
+    while(1){
+        //  cout<<"abc\n";fflush(stdout);
+        cin>>str;
+        // cout<<str+"111"<<endl;fflush(stdout);
+        //  str="";
+        system(str.data());
+
+        if(str=="1"){
+            //    aa.fun();
+        }
+    }
 }
 void test_fun()
 {
@@ -32,31 +40,48 @@ void test_fun1(int t)
     prt(info,"call %s : %d",__FUNCTION__,t);
 
 }
+class TC{
+            TestProcess aa;
+public:
+    TC()
+    {
+
+        aa.start();
+        aa.test_config();
+        thread(bind(&TC::handle_cmd,this)).detach();
+    }
+    void handle_cmd()
+    {
+        string str="123";
+        while(1){
+            //  cout<<"abc\n";fflush(stdout);
+            cin>>str;
+            // cout<<str+"111"<<endl;fflush(stdout);
+            //  str="";
+            system(str.data());
+
+            if(str=="1"){
+                    aa.fun();
+            }
+        }
+    }
+};
+
 int main()
 {
-
-
-
-    //    TestTimer().start();
+ //    TestTimer().start();
     prt(info,"app start");
     App app;
     app.start();
+    TC tc;
+   // TestProcess aa;
 
-
-
-
-   TestProcess aa;aa.start();
     //   TestSource  bb;bb.start();
 
-
-
-
-
-
     prt(info,"app ending in loop");
-    while (1) {
-        this_thread::sleep_for(chrono::milliseconds(100));
-    }
+    //    while (1) {
+    //        this_thread::sleep_for(chrono::milliseconds(100));
+    //    }
 
 
 
@@ -74,7 +99,7 @@ int main()
     //    }
     //    while(1)
     //        ;
-    //    thread(bind(handle_cmd)).detach();
+  //  thread(bind(handle_cmd)).detach();
     //    App app;
     //    app.start();
 

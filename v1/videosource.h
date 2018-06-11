@@ -206,7 +206,7 @@ private:
     {
         if(vcap.isOpened()){
             double w= vcap.get(CV_CAP_PROP_POS_FRAMES);
-            prt(info,"%s src frames %lf",url.data(),w);
+      //      prt(info,"%s src frames %lf",url.data(),w);
         }
     }
 

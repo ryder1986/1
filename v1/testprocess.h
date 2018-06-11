@@ -6,17 +6,20 @@
 #include "c4processor.h"
 #include "videoprocessor.h"
 #include "hogprocessor.h"
+
 class TestProcess:public Test
 {
 public:
+    //   TestProcess():src("rtsp://192.168.1.95:554/av0_1")
+    // TestProcess():src("rtsp://192.168.1.216:8554/test1")
     TestProcess():src("rtsp://192.168.1.95:554/av0_1")
-      //  TestProcess():src("rtsp://192.168.1.216:8554/test1")
     {
         DataPacket pkt;
-        pkt.set_string("ratio","0.7");
+
         pkt.set_int("step",2);
+        pkt.set_string("ratio","0.7");
         pro=new PvdC4Processor(pkt);
-      //     pro=new PvdHogProcessor(pkt);
+        //     pro=new PvdHogProcessor(pkt);
     }
 
 
@@ -29,18 +32,25 @@ public:
     {
         prt(info,"test %s ",typeid(TestProcess).name());
     }
-    void run_process(int t)
+    void test_config()
+    {
+        //    pro->process()
+        DataPacket pkt= pro->get_config();
+        int step=  pkt.get_int("step");
+    }
+
+    void run_process()
     {
         Mat frame;
         while(1){
             this_thread::sleep_for(chrono::milliseconds(10));
             if(src.get_frame(frame)&&frame.cols>0&&frame.rows>0){
-                prt(info,"get a frame ");
+                //       prt(info,"get a frame ");
                 vector <Rect> rcts;
                 Rect area(0,0,640,480);
 
                 pro->process(frame,rcts,area);
-                prt(info,"result %d ",rcts.size());
+                //        prt(info,"result %d ",rcts.size());
 
                 if(rcts.size()>0){
                     cv::Rect rc=rcts.front();
@@ -81,8 +91,9 @@ public:
     }
     void start()
     {
-           _start(bind(&TestProcess::run_process,this,placeholders::_1),99);
-     //    _start_async(bind(&TestProcess::run_process1,this,placeholders::_1),43);
+        //   _start(bind(&TestProcess::run_process,this));
+        //  _start(bind(&TestProcess::run_process,this,placeholders::_1),99);
+        _start_async(bind(&TestProcess::run_process,this));
         prt(info,"start done ~~~~~~~~~~~~~~~");
     }
 

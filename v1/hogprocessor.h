@@ -24,17 +24,17 @@ class PvdHogProcessor : public VideoProcessor
     }m_result;
 
 public:
-    PvdHogProcessor(JsonValue jv,int id):VideoProcessor()
-    {
-        arg.no=id;
-        set_config(jv);
-    }
-    PvdHogProcessor(DataPacket pkt , vector <Rect> rct):VideoProcessor()
-    {
+//    PvdHogProcessor(JsonValue jv,int id):VideoProcessor()
+//    {
+//        arg.no=id;
+//        set_config(jv);
+//    }
+//    PvdHogProcessor(DataPacket pkt , vector <Rect> rct):VideoProcessor()
+//    {
 
-        //  set_config(jv);
-    }
-    PvdHogProcessor(DataPacket):VideoProcessor()
+//        //  set_config(jv);
+//    }
+    PvdHogProcessor(DataPacket pkt):VideoProcessor(pkt)
     {
 
         //  set_config(jv);
