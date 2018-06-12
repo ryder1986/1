@@ -85,7 +85,7 @@ public:
         str.append(ss.str());
         pkt.set_string("ratio",str);
     }
-     DataPacket get_config()
+    DataPacket get_config()
     {
         DataPacket ret;
         trans(ret,arg);

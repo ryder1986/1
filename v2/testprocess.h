@@ -12,15 +12,16 @@ class TestProcess:public Test
 public:
     //   TestProcess():src("rtsp://192.168.1.95:554/av0_1")
     // TestProcess():src("rtsp://192.168.1.216:8554/test1")
-  //  TestProcess():src("rtsp://192.168.1.95:554/av0_1")
-      TestProcess():src("/media/sf_E_DRIVE/test-videos/27s-640x480-gop.mp4")
-      {
+    //  TestProcess():src("rtsp://192.168.1.95:554/av0_1")
+    // TestProcess():src("/media/sf_E_DRIVE/test-videos/27s-640x480-gop.mp4")
+    TestProcess():src("rtsp://192.168.1.95:554/av0_1")
+    {
         DataPacket pkt;
 
         pkt.set_int("step",2);
         pkt.set_string("ratio","0.7");
         pro=new PvdC4Processor(pkt);
-       //      pro=new PvdHogProcessor(pkt);
+        //      pro=new PvdHogProcessor(pkt);
     }
 
 

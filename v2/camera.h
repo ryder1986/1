@@ -1,155 +1,85 @@
 #ifndef CAMERA_H
 #define CAMERA_H
+
+#include "tool.h"
+#include "test.h"
 #include "videosource.h"
 #include "c4processor.h"
 #include "videoprocessor.h"
 #include "hogprocessor.h"
-#include <mutex>
-using namespace cv;
-class Camera
+
+class Camera:public Test
 {
-    typedef struct alg{
-        JsonValue pvd_c4;
-        JsonValue pvd_hog;
-        string selected_alg;
-    }alg_t;
-
-    typedef struct Camera_config{
-        string url;
-        int direction;
-        int camera_id;
-        string user_name;
-        string password;
-        string camera_ip;
-        int camera_port;
-        DataPacket chs;
-        //alg_t alg;
-    }Config_t;
-    Rect detect_rect;
 public:
-    enum{
-        MOD_TYPE_ALG,
-        MOD_TYPE_ATTR
-    };
-
-    Camera(DataPacket pkt)
+    //   TestProcess():src("rtsp://192.168.1.95:554/av0_1")
+    // TestProcess():src("rtsp://192.168.1.216:8554/test1")
+    //  TestProcess():src("rtsp://192.168.1.95:554/av0_1")
+    // TestProcess():src("/media/sf_E_DRIVE/test-videos/27s-640x480-gop.mp4")
+    Camera():src("rtsp://192.168.1.95:554/av0_1"),quit(false)
     {
-        send_check_tick=0;
-        quit=false;
-        decode(pkt);
-        start_cam();
+        DataPacket pkt;
+
+        pkt.set_int("step",2);
+        pkt.set_string("ratio","0.7");
+        pro=new PvdC4Processor(pkt);
+        //      pro=new PvdHogProcessor(pkt);
     }
+
 
     ~Camera()
     {
-        stop_cam();
+        delete pro;
+        prt(info," quit test process ");
     }
-
-    DataPacket config()
+    void fun()
     {
-        return encode();
+        prt(info,"test %s ",typeid(Camera).name());
     }
-    bool modify(DataPacket data)
+    void test_config()
     {
-
+        DataPacket pkt= pro->get_config();
+        int step=  pkt.get_int("step");
     }
 
-private:
-    void restart_processor()
+    void run_process()
     {
-//        mtx.lock();
-//        if(processors.size()){
-//            for (VideoProcessor *p:processors) {
-//                delete p;
-//            }
-//            processors.clear();
-//        }
-//        for (DataPacket pkt: cam_cfg.chs) {
+        Mat frame;
+        while(!quit){
+            this_thread::sleep_for(chrono::milliseconds(10));
+            if(src.get_frame(frame)&&frame.cols>0&&frame.rows>0){
+                //       prt(info,"get a frame ");
+                vector <Rect> rcts;
+                Rect area(0,0,640,480);
 
-//            string str=pkt.get_string("selected_alg");
-//            int channel_id=pkt.get_int("channel_id");
-//            if(str=="pvd_c4"){
-//                processors.push_back(new PvdC4Processor(pkt.get_value(str),channel_id));
-//            }else if(str=="pvd_hog"){
-//                processors.push_back(new PvdHogProcessor(pkt.get_value(str),channel_id));
-//            }
-//        }
+                pro->process(frame,rcts,area);
+                //        prt(info,"result %d ",rcts.size());
 
-//        mtx.unlock();
+                if(rcts.size()>0){
+                    cv::Rect rc=rcts.front();
+                    //    prt(info,"%d %d %d %d  ",rc.x,rc.y,rc.width,rc.height);
+                    rectangle(frame,rc, cv::Scalar(0,255,255), 1);
+                }
+                imshow("123",frame);
+                waitKey(1);
+            }
+        }
     }
-
-    void start_cam()
+    void start()
     {
-        src=new VideoSource(cam_cfg.url);
-        restart_processor();
-
+        //   _start(bind(&TestProcess::run_process,this));
+        //  _start(bind(&TestProcess::run_process,this,placeholders::_1),99);
+        _start_async(bind(&Camera::run_process,this));
+        prt(info,"start done ~~~~~~~~~~~~~~~");
     }
-
-    void stop_cam()
+    void stop()
     {
         quit=true;
-        prt(info,"stoping camera..");
-        prt(info," camera %s stoped",this->src->get_url().data());
-        delete src;
-        if(processors.size()){
-            for (VideoProcessor *p: processors) {
-                delete p;
-            }
-            processors.clear();
-        }
-        src=NULL;
-        prt(info,"delete done");
     }
 
-    DataPacket encode()
-    {
-        DataPacket pkt;
-        pkt.set_string("url",cam_cfg.url);
-        pkt.set_int("direction",cam_cfg.direction);
-        pkt.set_int("camera_id",cam_cfg.camera_id);
-        pkt.set_string("user_name",cam_cfg.user_name);
-        pkt.set_string("password",cam_cfg.password);
-        pkt.set_string("camera_ip",cam_cfg.camera_ip);
-        pkt.set_int("camera_port",cam_cfg.camera_port);
-        pkt.set_pkt("channel",DataPacket(cam_cfg.chs));
-
-        return pkt;
-    }
-
-    void decode(DataPacket pkt)
-    {
-        cam_cfg.url = pkt.get_string("url");
-        cam_cfg.direction=pkt.get_int("direction");
-        cam_cfg.camera_id=pkt.get_int("camera_id");
-        cam_cfg.user_name=pkt.get_string("user_name");
-        cam_cfg.password=pkt.get_string("password");
-        cam_cfg.camera_ip=pkt.get_string("camera_ip");
-        cam_cfg.camera_port=pkt.get_int("camera_port");
-        cam_cfg.chs=pkt.get_pkt("channel");
-    }
-
-    void send_out(string ba)
-    {
-        bool send_flag=false;
-        if(send_check_tick++>50){
-            send_flag=true;
-            send_check_tick=0;
-
-        }
-
-    }
-
-protected:
-    void run();
 private:
-    int threadid;
-    VideoSource *src;
-    vector <VideoProcessor *> processors;
-    Config_t cam_cfg;
+    VideoSource src;
+    VideoProcessor *pro;
     bool quit;
-    mutex mtx;
-    int send_check_tick;
-
 };
 
 #endif // CAMERA_H
