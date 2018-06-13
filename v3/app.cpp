@@ -2,12 +2,14 @@
 #include "configmanager.h"
 App::App():str_stream("")
 {
-    string dev_name= cm.get_config().get_string("device_name");;
-    cout<< "device name is : "<< cm.get_config().get_int("server_port") <<endl;
-    cout<< "string  : "<<cm.get_config().data() <<endl;
+
+    decode(cm.get_config());
+//    string dev_name= cm.get_config().get_string("device_name");;
+//    cout<< "device name is : "<< cm.get_config().get_int("server_port") <<endl;
+//    cout<< "string  : "<<cm.get_config().data() <<endl;
 
     static Tcpserver server(stream_cmd,
-                            cm.get_config().get_int("server_port"),
+                            private_data.server_port,
                             bind(&App::process_data,
                                  this,placeholders::_1,
                                  placeholders::_2,
@@ -19,6 +21,8 @@ App::App():str_stream("")
 //                                        placeholders::_2,
 //                                        placeholders::_3));
 
-start_cams();
+
+
+    start_cams();
 }
 

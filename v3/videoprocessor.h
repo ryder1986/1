@@ -30,7 +30,7 @@ public:
     string alg_rst;
     VideoProcessor(DataPacket pkt):JsonDataDealer()
     {
-        decode(pkt);
+         decode(pkt);
     }
 
     int get_id()
@@ -85,12 +85,12 @@ public:
         str.append(ss.str());
         pkt.set_string("ratio",str);
     }
-    DataPacket get_config()
-    {
-        DataPacket ret;
-        encode(ret);
-        return ret;
-    }
+//    DataPacket get_config()
+//    {
+//        DataPacket ret;
+//        encode(ret);
+//        return ret;
+//    }
     Rect area_2_rect(vector<DataPacket> area)
     {
         int x_min=10000;

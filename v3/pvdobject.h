@@ -9,12 +9,22 @@ protected:
     TP private_data;
 public:
     virtual void encode(DataPacket &data)=0;
-    virtual void decode(DataPacket data)=0;
-    virtual DataPacket get_config()=0;
+    virtual void decode(DataPacket data){}
+    virtual DataPacket get_config()
+    {
+        DataPacket pkt;
+        encode(pkt);
+        return pkt;
+    }
+
     JsonDataDealer()
     {
 
     }
+//    JsonDataDealer(DataPacket pkt)
+//    {
+//        decode(pkt);
+//    }
 //    JsonDataDealer(DataPacket pkt)
 //    {
 //        decode(pkt);

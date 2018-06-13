@@ -21,39 +21,31 @@ public:
     // TestProcess():src("rtsp://192.168.1.216:8554/test1")
     //  TestProcess():src("rtsp://192.168.1.95:554/av0_1")
     // TestProcess():src("/media/sf_E_DRIVE/test-videos/27s-640x480-gop.mp4")
-//    Camera():src("rtsp://192.168.1.95:554/av0_1"),quit(false)
-//    {
-//        DataPacket pkt;
+    //    Camera():src("rtsp://192.168.1.95:554/av0_1"),quit(false)
+    //    {
+    //        DataPacket pkt;
 
-//        pkt.set_int("step",2);
-//        pkt.set_string("ratio","0.7");
-//        pro=new PvdC4Processor(pkt);
-//        //      pro=new PvdHogProcessor(pkt);
-//    }
+    //        pkt.set_int("step",2);
+    //        pkt.set_string("ratio","0.7");
+    //        pro=new PvdC4Processor(pkt);
+    //        //      pro=new PvdHogProcessor(pkt);
+    //    }
 
     Camera(DataPacket cfg):JsonDataDealer(),quit(false)
     {
-
-
-
-
-       decode(cfg);
+        decode(cfg);
         src=new VideoSource(private_data.url);
-        //  trans(arg,cfg);
     }
     void encode(DataPacket &data)
     {
-
+        data.set_string("url",private_data.url);
+        data.set_array_packet("channels",private_data.channels);
     }
 
     void decode(DataPacket data)
     {
         private_data.url=data.get_string("url");
-    }
-
-    DataPacket get_config()
-    {
-
+        private_data.channels=data.get_array_packet("channels");
     }
 
     ~Camera()

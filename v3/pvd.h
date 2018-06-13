@@ -115,7 +115,7 @@ public:
         }
         return ar;
     }
-    void set_array(string name,vector<DataPacket> ar)
+    void set_array_packet(string name,vector<DataPacket> ar)
     {
 
 //        JsonValue v;
