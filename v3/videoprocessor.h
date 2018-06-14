@@ -28,11 +28,17 @@ protected:
   //  arg_t arg;
 public:
     string alg_rst;
+#if 1
     VideoProcessor(DataPacket pkt):JsonDataDealer()
     {
          decode(pkt);
     }
+#else
+    VideoProcessor(DataPacket pkt):JsonDataDealer(pkt)
+    {
 
+    }
+#endif
     int get_id()
     {
         return channel_id;

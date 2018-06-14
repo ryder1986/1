@@ -9,8 +9,8 @@ protected:
     TP private_data;
 public:
     virtual void encode(DataPacket &data)=0;
-    virtual void decode(DataPacket data){}
-    virtual DataPacket get_config()
+    virtual void decode(DataPacket data)=0;
+    DataPacket get_config()
     {
         DataPacket pkt;
         encode(pkt);
@@ -21,13 +21,14 @@ public:
     {
 
     }
-//    JsonDataDealer(DataPacket pkt)
-//    {
-//        decode(pkt);
-//    }
-//    JsonDataDealer(DataPacket pkt)
-//    {
-//        decode(pkt);
-//    }
+    //    JsonDataDealer(DataPacket pkt)
+    //    {
+    //         get_config();
+    //          decode(pkt);
+    //    }
+    //    JsonDataDealer(DataPacket pkt)
+    //    {
+    //        decode(pkt);
+    //    }
 };
 #endif // PVDOBJECT_H

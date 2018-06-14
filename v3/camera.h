@@ -30,12 +30,19 @@ public:
     //        pro=new PvdC4Processor(pkt);
     //        //      pro=new PvdHogProcessor(pkt);
     //    }
-
-    Camera(DataPacket cfg):JsonDataDealer(),quit(false)
+#if 1
+    Camera(DataPacket cfg,function <void(Camera *,char *,int)>fc):JsonDataDealer(),quit(false)
     {
         decode(cfg);
         src=new VideoSource(private_data.url);
     }
+#else
+    Camera(DataPacket cfg):JsonDataDealer(cfg),quit(false)
+    {
+
+        src=new VideoSource(private_data.url);
+    }
+#endif
     void encode(DataPacket &data)
     {
         data.set_string("url",private_data.url);
@@ -79,10 +86,10 @@ public:
                 if(rcts.size()>0){
                     cv::Rect rc=rcts.front();
                     //    prt(info,"%d %d %d %d  ",rc.x,rc.y,rc.width,rc.height);
-                    rectangle(frame,rc, cv::Scalar(0,255,255), 1);
+                    //rectangle(frame,rc, cv::Scalar(0,255,255), 1);
                 }
-                imshow("123",frame);
-                waitKey(1);
+//                imshow("123",frame);
+//                waitKey(1);
             }
         }
     }

@@ -34,7 +34,7 @@ public:
 
 private:
 
-    void process_data(Session *clt,char *data,int len)
+    void process_client_data(Session *clt,char *data,int len)
     {
         str_stream.append(string(data,len));
         prt(info,"string is %s",str_stream.data());
@@ -70,6 +70,11 @@ private:
         }
 #endif
     }
+    void process_camera_data(Camera *clt,char *data,int len)
+    {
+
+    }
+
     void restart_all()
     {
         stop_cams();
@@ -77,7 +82,7 @@ private:
     }
 
     //TODO,we dont need clients message, so result can be send by udp one day.
-    void process_data_from_output(Session *clt,char *data,int len)
+    void process_data_from_output(Camera *clt,char *data,int len)
     {
         //ignore request now, we just send all clts with results
     }
@@ -85,7 +90,10 @@ private:
     void start_cams()
     {
         for(DataPacket p:private_data.cams){
-            cms.push_back(new Camera(p));
+            cms.push_back(new Camera(p,bind(&App::process_camera_data,
+                                            this,placeholders::_1,
+                                            placeholders::_2,
+                                            placeholders::_3)));
         }
     }
     void stop_cams()
@@ -98,7 +106,10 @@ private:
     void add_camera(int index,DataPacket data)//after who ?  0~size
     {
         if(0<=index&&index<=cms.size()){
-            Camera *c=new Camera(data);
+            Camera *c=new Camera(data,bind(&App::process_camera_data,
+                                           this,placeholders::_1,
+                                           placeholders::_2,
+                                           placeholders::_3));
             vector<Camera*>::iterator it=cms.begin();
             cms.insert(it+index,c);
           //  cms.insert(cms::iterator+index);
