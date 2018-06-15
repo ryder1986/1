@@ -36,7 +36,8 @@ public:
         DataPacket pkt;    pkt.set_int("step",2);  pkt.set_string("ratio","0.7");
         decode(cfg);
         for(DataPacket p:private_data.channels){
-            pro=new PvdC4Processor(p);
+            if(p.get_string("seletected_alg")=="pvd_c4")
+                pros.push_back(new PvdC4Processor(p.get_pkt("pvd_c4")));
         }
 
         src=new VideoSource(private_data.url);

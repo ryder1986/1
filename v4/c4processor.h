@@ -74,6 +74,7 @@ public:
         r.height=img_src.rows;
 
         //  Mat img=img_src(detect_area);
+        private_data.area=detect_area;
         Mat img=img_src(private_data.area);
         if(real_process(img,r)){
             ret=true;
