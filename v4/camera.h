@@ -16,7 +16,9 @@ typedef struct CameraArg{
 class Camera:JsonDataDealer<CameraArg_t>
 {
     //  CameraArg_t arg;
+    function <void(Camera *,char *,int)>callback_result;
 public:
+
     //   TestProcess():src("rtsp://192.168.1.95:554/av0_1")
     // TestProcess():src("rtsp://192.168.1.216:8554/test1")
     //  TestProcess():src("rtsp://192.168.1.95:554/av0_1")
@@ -31,14 +33,15 @@ public:
     //        //      pro=new PvdHogProcessor(pkt);
     //    }
 #if 1
-    Camera(DataPacket cfg,function <void(Camera *,char *,int)>fc):JsonDataDealer(),quit(false)
+    Camera(DataPacket cfg,function <void(Camera *,char *,int)>fc):JsonDataDealer(),quit(false),callback_result(fc)
     {
         DataPacket pkt;    pkt.set_int("step",2);  pkt.set_string("ratio","0.7");
         decode(cfg);
         for(DataPacket p:private_data.channels){
             if(p.get_string("seletected_alg")=="pvd_c4")
                 pros.push_back(new PvdC4Processor(p.get_pkt("pvd_c4")));
-        }
+               // pros.push_back(new PvdHogProcessor(p.get_pkt("pvd_c4")));
+            }
 
         src=new VideoSource(private_data.url);
         start();
@@ -94,7 +97,7 @@ public:
 
                 if(rcts.size()>0){
                     cv::Rect rc=rcts.front();
-                    //    prt(info,"%d %d %d %d  ",rc.x,rc.y,rc.width,rc.height);
+                        prt(info,"%d %d %d %d  ",rc.x,rc.y,rc.width,rc.height);
                     //rectangle(frame,rc, cv::Scalar(0,255,255), 1);
                 }
                 //                imshow("123",frame);
