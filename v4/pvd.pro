@@ -25,9 +25,14 @@ INSTALLS+=install_files
 
 DISTFILES += \
     res/config.json
-LIBS+=-L/root/source/opencv/build/__install/lib -lopencv_core -lopencv_highgui \
--lopencv_objdetect -lopencv_imgproc -lopencv_ml -lopencv_highgui \
- -lopencv_video  -lopencv_videostab -lopencv_videoio
+#LIBS+=-L/root/source/opencv/build/__install/lib -lopencv_core -lopencv_highgui \
+#-lopencv_objdetect -lopencv_imgproc -lopencv_ml -lopencv_highgui \
+# -lopencv_video  -lopencv_videostab -lopencv_videoio
+LIBS+= -lopencv_core -lopencv_highgui \
+-lopencv_objdetect -lopencv_imgproc -lopencv_ml -lopencv_highgui\
+ -lopencv_video -lpthread
+
+
 LIBS+=-lavcodec -lavformat -lavutil -lswresample
 INCLUDEPATH+=track
 SOURCES +=track/Ctracker.cpp track/HungarianAlg.cpp  track/Kalman.cpp

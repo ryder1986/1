@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += console c++11
 CONFIG -= app_bundle
-#CONFIG -= qt
+CONFIG -= qt
 
 
 INCLUDEPATH +=cppjson/include
@@ -27,7 +27,9 @@ DISTFILES += \
     res/config.json
 LIBS+=-L/root/source/opencv/build/__install/lib -lopencv_core -lopencv_highgui \
 -lopencv_objdetect -lopencv_imgproc -lopencv_ml -lopencv_highgui \
- -lopencv_video  -lopencv_videostab -lopencv_videoio
+ -lopencv_video # -lopencv_videostab -lopencv_videoio
+
+
 LIBS+=-lavcodec -lavformat -lavutil -lswresample
 INCLUDEPATH+=track
 SOURCES +=track/Ctracker.cpp track/HungarianAlg.cpp  track/Kalman.cpp

@@ -1,12 +1,195 @@
 #ifndef PVD_H
 #define PVD_H
 #include <cstring>
+#include <QtCore>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonValue>
+#include <QJsonArray>
 #include <json/json.h>
 #include <json/value.h>
-#include "configmanager.h"
+
+#include "filedatabase.h"
 using namespace std;
+#if 0
+//typedef  QString string_t;
+typedef  QJsonValue JsonValue;
+#else
+//typedef  string string_t;
 using  namespace Json ;
 typedef  Value JsonValue;
+
+#endif
+
+#if 0
+class DataPacket{
+public:
+    DataPacket(string data)
+    {
+        QJsonDocument doc=QJsonDocument::fromJson(QByteArray(data.data(),data.size()));
+        jv=doc.object();
+    }
+    DataPacket()
+    {
+
+    }
+    DataPacket(JsonValue v)
+    {
+        jv=v;
+    }
+    string data()
+    {
+        QJsonObject obj=jv.toObject();
+        QJsonDocument doc(obj);
+        return doc.toJson().data();
+    }
+    //   template <typename tp>
+    //    void set_value(QString name,tp value)
+    //    {
+    //        QJsonObject obj=jv.toObject();
+    //        obj[name]=value;
+    //        jv=obj;
+
+    //    }
+    //    void set_string(QString name,QString value)
+    //    {
+    //        QJsonObject obj=jv.toObject();
+    //        obj[name]=value;
+    //        jv=obj;
+
+    //    }
+    DataPacket(vector<JsonValue> v)
+    {
+        QJsonArray ar;
+        int i=0;
+        int sz=v.size();
+        for(;i<sz;i++){
+            ar.append(v[i]);
+        }
+
+        QJsonObject obj=jv.toObject();
+
+        jv=ar;
+    }
+
+    void set_array(QString name,vector<JsonValue> v)
+    {
+        QJsonArray ar;
+        int i=0;
+        int sz=v.size();
+        for(;i<sz;i++){
+            ar.append(v[i]);
+        }
+
+        QJsonObject obj=jv.toObject();
+        obj[name]=ar;
+        jv=obj;
+    }
+    vector<JsonValue> get_array(QString name)
+    {
+        QJsonArray ar= get_value(name).toArray();
+        vector<JsonValue> v;
+
+
+        int i=0;
+        int sz=ar.size();
+        for(;i<sz;i++){
+            v.push_back(ar[i]);
+        }
+
+        return v;
+    }
+    int get_int(QString name)
+    {
+        return get_value(name).toInt();
+    }
+
+
+    bool get_bool(QString name)
+    {
+        return get_value(name).toBool();
+    }
+
+
+    string get_string(QString name)
+    {
+        //  return string(get_value(name).toString().toStdString().data());
+        return string(get_value(name).toString().toUtf8());
+    }
+
+    JsonValue get_value(QString name)
+    {
+        QJsonObject obj=jv.toObject();
+        return obj[name];
+    }
+
+
+
+    void set_int(QString name,int v)
+    {
+        QJsonObject obj=jv.toObject();
+
+        obj[name]=v;
+        jv=obj;
+    }
+
+
+    void  set_bool(QString name ,bool v)
+    {
+        QJsonObject obj=jv.toObject();
+
+        obj[name]=v;
+        jv=obj;
+    }
+
+
+    void set_string(QString name,string v)
+    {
+        QJsonObject obj=jv.toObject();
+
+        obj[name]=QString(v.data());
+        jv=obj;
+    }
+
+    void set_value(QString name,JsonValue v)
+    {
+        QJsonObject obj=jv.toObject();
+
+        obj[name]=v;
+        jv=obj;
+    }
+
+
+
+
+    vector <JsonValue>  array_value()
+    {
+        int sz=jv.toArray().size();
+        vector <JsonValue> vec;
+        for(int i=0;i<sz;i++)
+        {
+            vec.push_back(jv.toArray()[i]);
+        }
+        return vec;
+    }
+
+
+    JsonValue value()
+    {
+        return jv;
+    }
+private:
+
+    //  QJsonObject obj;
+    JsonValue jv;
+};
+//    char *str2utf8str(string_t str)
+//    {
+//         return str.toUtf8().data();
+//    }
+
+#else
+
 class DataPacket{
 public:
     DataPacket(string json_data)
@@ -16,16 +199,13 @@ public:
         bool rst=r.parse(json_data,v);
         val=v;
     }
-
     DataPacket(JsonValue v)
     {
         val = v;
     }
-
     DataPacket()
     {
     }
-
     DataPacket(  vector<JsonValue>   ar)
     {
         JsonValue v;
@@ -35,24 +215,26 @@ public:
         }
         val=v;
     }
+    //    template <typename tp>
+    //    void set_value(string name,tp value)
+    //    {
+    //        val[name]=value;
+    //    }
 
-    DataPacket(  vector<DataPacket>   ar)
-    {
-        JsonValue v;
-        int sz=ar.size();
-        for(int i=0;i<sz;i++){
-            v[i]=ar[i].val;
-        }
-        val=v;
-    }
+
 
     void set_int(string name,int v)
     {
+
+
         val[name]=v;
+
     }
+
 
     void  set_bool(string name ,bool v)
     {
+
         val[name]=v;
     }
 
@@ -66,18 +248,11 @@ public:
     {
         val[name]=value;
     }
-    void set_pkt(string name,DataPacket pkt)
-    {
-        val[name]=pkt.value();
-    }
+
 
     JsonValue get_value(string name)
     {
         return val[name];
-    }
-    DataPacket get_pkt(string name)
-    {
-        return DataPacket(val[name]);
     }
 
     int get_int(string name)
@@ -85,10 +260,12 @@ public:
         return get_value(name).asInt();
     }
 
+
     bool get_bool(string name)
     {
         return get_value(name).asBool();
     }
+
 
     string get_string(string name)
     {
@@ -105,28 +282,19 @@ public:
         }
         return ar;
     }
-    vector<DataPacket>  get_array_packet(string name)
+    void set_array(string name,vector<JsonValue> ar)
     {
-        JsonValue v=get_value(name);
-        vector<DataPacket>  ar;
-        int sz=v.size();
+        JsonValue v;
+        int sz=ar.size();
         for(int i=0;i<sz;i++){
-            ar.push_back( v[i]);
+            v.append(ar[i]);
         }
-        return ar;
+        set_value(name,v);
     }
-    void set_array_packet(string name,vector<DataPacket> ar)
+    JsonValue value()
     {
-
-//        JsonValue v;
-//        int sz=ar.size();
-//        for(int i=0;i<sz;i++){
-//            v.append(ar[i]);
-//        }
-        set_value(name,DataPacket(ar).value());
+        return val;
     }
-
-
     vector <JsonValue>  array_value()
     {
         int sz=val.size();
@@ -137,35 +305,16 @@ public:
         }
         return vec;
     }
-    vector <DataPacket>  array_packet()
-    {
-        int sz=val.size();
-        vector <DataPacket> vec;
-        for(int i=0;i<sz;i++)
-        {
-            vec.push_back(val[i]);
-        }
-        return vec;
-    }
     string data()
     {
+        // Reader r;
         FastWriter  w;
         return  w.write(val);
     }
-
-//    JsonValue value()
-//    {
-//        return val;
-//    }
 private:
-    JsonValue value()
-    {
-        return val;
-    }
-
     JsonValue val;
 };
-#if 0
+
 class Pvd{
 private:
     Pvd()
@@ -184,7 +333,7 @@ private:
         config_file=pkt.get_string("config_file");
         kalman_lost_frame_threhold=pkt.get_int("kalman_lost_frame_threhold");
         kalman_trace_len=pkt.get_int("kalman_trace_len");
-    }
+     }
 
 public:
     int server_port;
@@ -196,7 +345,7 @@ public:
     int kalman_lost_frame_threhold;
     int kalman_trace_len;
     static Pvd& get_instance()//ensure only 1 copy of Pvd exist in memory.
-    {//TODO: lock 4 multi-thread ?
+    {
 #if 1
         static FileDatabase server_setting("res/server.json");
         static Pvd pvd(server_setting.load());
@@ -237,72 +386,5 @@ public:
         SERVER_REPORTER_PORT=12348
     };
 };
-
 #endif
-#if 0
-examples:
-1.config file: a demo example of config.json
-{
-                   "cameras": [
-{
-               "channel": [
-{
-               "selected_alg":"pvd_c4",
-               "pvd_c4": {
-               "channel_id":1,
-               "step":2,
-               "ratio":"0.8",
-               "detect_area": [
-{
-               "x": 119,
-               "y": 332
-               },
-{
-               "x": 324,
-               "y": 312
-               },
-{
-               "x": 628,
-               "y": 462
-               },
-{
-               "x": 225,
-               "y": 474
-               }
-               ]
-               }
-               }
-  ],
-    "camera_id": 2,
-    "camera_ip": "192.168.1.97",
-    "camera_port": 5000,
-    "direction": 3,
-    "password": "admin",
-    "url": "rtsp://192.168.1.97:554/av0_1",
-    "url1": "rtsp://192.168.1.216:8554/test1",
-    "user_name": "admin"
-    }
-    ],
-    "deviceID": 0,
-    "device_name": "110",
-    "ntp_ip": "192.168.1.3",
-    "ntp_port": 1111,
-    "signal_machine_ip": "192.168.1.2",
-    "signal_machine_port": 9999
-    }
-    2.server.json: read when startup
-{
-                 "server_port":12345,
-                 "client_data_port":12346,
-                 "alg_hog_file1":"res/hogcascade_pedestrians.xml",
-                 "alg_c4_file1":"res/combined.txt.model",
-                 "alg_c4_file2":"res/combined2.txt.model",
-                 "config_file":"res/config.json",
-                 "kalman_lost_frame_threhold":5,
-                 "kalman_trace_len":100
-                 }
-  3.protocal: cmd sent from client
-
-
-  #endif
-  #endif // PD_H
+#endif // PD_H

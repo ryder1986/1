@@ -4,7 +4,7 @@
 #include <json/json.h>
 #include <json/value.h>
 #include "configmanager.h"
-#include <QJsonValue>
+//#include <QJsonValue>
 using namespace std;
 using  namespace Json ;
 #define JV
@@ -30,6 +30,10 @@ class DataPacket{
 public:
     DataPacket()
     {
+    }
+    DataPacket(JsonValue v)
+    {
+        val=v;
     }
 #ifdef JV
     DataPacket(string data)
@@ -65,6 +69,11 @@ public:
     vector<DataPacket>get_array(string name)
     {
         vector<DataPacket> rst;
+        rst.clear();
+        Value v=val[name];
+        for(Value v_m:v){
+            rst.push_back(DataPacket(v_m));
+        }
         return rst;
     }
 
