@@ -27,6 +27,12 @@ install_files.files+=movidius.py
 install_files.path=$$OUT_PWD/
 INSTALLS+=install_files
 
+install_files1.files+=res/
+install_files1.path=$$OUT_PWD/
+INSTALLS+=install_files1
+
+
+
 DISTFILES += \
     res/config.json \
     movidius.py

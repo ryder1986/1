@@ -220,12 +220,18 @@ PyObject* NDArrayConverter::toNDArray(const cv::Mat& m)
     if( !m.data )
         Py_RETURN_NONE;
     Mat temp, *p = (Mat*)&m;
+        printf(" (%x)convert  1\n",this);fflush(NULL);
     if(!p->refcount || p->allocator != &g_numpyAllocator)
     {
+          printf(" (%x)convert  a\n",this);fflush(NULL);
         temp.allocator = &g_numpyAllocator;
+          printf(" (%x)convert  b\n",this);fflush(NULL);
         m.copyTo(temp);
+          printf(" (%x)convert  c\n",this);fflush(NULL);
         p = &temp;
     }
+     printf(" (%x)convert 2\n",this);fflush(NULL);
     p->addref();
+     printf(" (%x)convert 3\n",this);fflush(NULL);
     return pyObjectFromRefcount(p->refcount);
 }

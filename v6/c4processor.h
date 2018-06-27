@@ -57,6 +57,7 @@ public:
 
     virtual bool process(Mat img_src,vector<Rect> &rects,Rect detect_area)
     {
+        prt(info,"processor %x .......",this);
         MovidiusProcessor &pro= MovidiusProcessor::get_instance();
         cout<<img_src.cols<<endl;
         pro.process(img_src);

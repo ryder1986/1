@@ -61,6 +61,7 @@ class MovidiusProcessor
 {
     vector <Rect> result;
     PyObject* obj;
+
 public:
     static MovidiusProcessor &get_instance()
     {
@@ -70,8 +71,9 @@ public:
 
     void process(Mat frame)
     {
-        lock.lock();
-        printf(" processing \n");fflush(NULL);
+       printf(" (%x)processing  request a frame \n",this);fflush(NULL);
+        frame_lock.lock();
+        printf(" (%x)processing  1\n",this);fflush(NULL);
         result.clear();
         //        printf("----------- cvt -----------\n");fflush(NULL);
         //        //  NDArrayConverter cvt;
@@ -80,7 +82,20 @@ public:
         //        printf("----------- cvt done-----------\n");fflush(NULL);
 
 
-        py_arg_t<PyObject*> test_arg(convert(frame),"O");
+
+
+
+        //py_arg_t<PyObject*> test_arg(convert(frame),"O");
+
+  NDArrayConverter cvt;
+            printf(" (%x)processing  1.1\n",this);fflush(NULL);
+        PyObject* obj;
+        obj = cvt.toNDArray(frame);
+           printf(" (%x)processing  1.2\n",this);fflush(NULL);
+        py_arg_t<PyObject*> test_arg(obj,"O");
+
+   printf(" (%x)processing  1.3\n",this);fflush(NULL);
+
 
 #if 0
         //call_py("process",pDict,test_arg);
@@ -88,7 +103,7 @@ public:
 #else
 
         PyObject* rect_data;
-
+      printf(" (%x)processing  2\n",this);fflush(NULL);
         PyObject* ret_objs;
         rect_data= call_py("process",pDict,test_arg);
 
@@ -110,9 +125,9 @@ public:
             }
             printf("-----\n");
         }
-
+      printf(" (%x)processing  3\n",this);fflush(NULL);
 #endif
-        lock.unlock();
+        frame_lock.unlock();
     }
 
     vector <Rect> get_rects()
@@ -196,7 +211,7 @@ private:
 
     }
 
-    mutex lock;
+    mutex frame_lock;
     PyObject *pName,*pModule,*pDict;
 
 };
