@@ -1,0 +1,6 @@
+{"cameras":
+[
+{"channels":[{"channel_id":88,"pvd_c4":{"detect_area":[{"x":119,"y":332},{"x":324,"y":312},{"x":628,"y":462},{"x":225,"y":474}],"ratio":"0.8","step":2},"selected_alg":"pvd_c4"}],"url":"rtsp://192.168.1.95:554/av0_1","url1":"rtsp://192.168.1.216:8554/test1333"}
+],
+"device_name":"test pvd",
+"server_port":12345}
