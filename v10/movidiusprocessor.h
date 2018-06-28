@@ -279,7 +279,8 @@ public:
     {
         printf(" (%x)processing  request a frame \n",this);fflush(NULL);
         frame_lock.lock();
-
+//        Py_BEGIN_ALLOW_THREADS;
+//        Py_BLOCK_THREADS;
         //   st= PyEval_SaveThread();
        //       Py_Initialize(); //初始化Python环境
         //     PyEval_AcquireLock();
@@ -292,19 +293,41 @@ public:
 
         result.clear();
         PyObject* obj;
+//        Py_UNBLOCK_THREADS;
+//        Py_END_ALLOW_THREADS;
+//   PyEval_ReleaseLock();
+   //      st=PyEval_SaveThread();
         obj = p_cvt->toNDArray(frame);
+//         PyEval_RestoreThread(st);
+//       PyEval_AcquireLock();
+//        Py_BEGIN_ALLOW_THREADS;
+//        Py_BLOCK_THREADS;
         py_arg_t<PyObject*> test_arg(obj,"O");
          printf("convert done "); ;fflush(NULL);
         PyObject* rect_data;
         PyObject* ret_objs;
         py_arg_t<int> arg_w(frame.cols,"l");
         py_arg_t<int> arg_h(frame.rows,"l");
-            printf("start call py"); ;fflush(NULL);
-        rect_data= call_py("process1",pDict,test_arg,arg_w,arg_h);
+            printf("start call py\n"); ;fflush(NULL);
+
+                 //   Py_UNBLOCK_THREADS;
+              //      Py_END_ALLOW_THREADS;
+              // PyEval_ReleaseLock();
+                //   st=PyEval_SaveThread();
+            rect_data= call_py("process1",pDict,test_arg,arg_w,arg_h);
+                  //   PyEval_RestoreThread(st);
+               //    PyEval_AcquireLock();
+                  //  Py_BEGIN_ALLOW_THREADS;
+                  // Py_BLOCK_THREADS;
+
+
+            printf("end call py\n"); ;fflush(NULL);
         PyArg_Parse(rect_data, "O!", &PyList_Type, &ret_objs);
+          printf("---------parse done---------\n");;fflush(NULL);
         int size=PyList_Size(ret_objs);
         //    int size=0;
         printf("-----------get object rects: %d-----------\n",size/4);;fflush(NULL);
+        printf("---------1---------\n");;fflush(NULL);
 
         rst.clear();
         int i,j;
@@ -327,6 +350,7 @@ public:
             printf("-----\n");
             rst.push_back(Rect(x,y,w,h));
         }
+           printf("---------2---------\n");;fflush(NULL);
         printf(" (%x)processing  3\n",this);fflush(NULL);
         /**************************以下加入需要调用的python脚本代码  End***********************/
 //            Py_UNBLOCK_THREADS;
@@ -337,6 +361,8 @@ public:
    //   PyEval_RestoreThread(st);
 
        // release();
+//        Py_UNBLOCK_THREADS;
+//        Py_END_ALLOW_THREADS;
         frame_lock.unlock();
     }
 
@@ -414,13 +440,14 @@ private:
      //   init_thread_py();
  //          init_py();
        Py_Initialize();
-//   PyEval_InitThreads();
+    PyEval_InitThreads();
 //      int nInit = PyEval_ThreadsInitialized();
-        if ( !Py_IsInitialized() ) {
-            printf("init err\n");
-        }else{
-            printf("init ok\n");
-        }
+       // if ( !Py_IsInitialized() ) {
+         //   printf("init err\n");
+       // }else{
+         //   printf("init ok\n");
+       // }
+     //   init_thread_py();
         p_cvt=new NDArrayConverter();
         printf("finding ...\n");
 

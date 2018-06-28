@@ -655,8 +655,9 @@ def process1(picture,width,height):
     print "start time:" + str(start_time)
   #  sys.stdout.flush()
     input_image = picture
-    print "objs 1"
+    print "objs 1----->"
     input_image = cv2.resize(input_image, (NETWORK_IMAGE_WIDTH, NETWORK_IMAGE_HEIGHT), cv2.INTER_LINEAR)
+    print "objs 1.1"
     input_image = input_image.astype(np.float32)
     print "objs 2"
     input_image = np.divide(input_image, 255.0)

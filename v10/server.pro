@@ -12,8 +12,8 @@ SOURCES += main.cpp tool.cpp server.cpp cppjson/json_reader.cpp cppjson/json_wri
     camera.cpp \
     conversion.cpp \
     movidiusprocessor.cpp \
-    datapacket.cpp \
-    socket.cpp
+    socket.cpp \
+    app.cpp
 HEADERS+=tool.h server.h \
     app.h \
     configmanager.h videosource.h test.h  c4common.h \
@@ -39,7 +39,9 @@ QMAKE_CXXFLAGS+=-w
 DISTFILES += \
     res/config.json \
     movidius.py
-#LIBS+=-L/root/source/opencv/build/__install/lib -lopencv_core -lopencv_highgui \
+
+#INCLUDEPATH+=/root/opencv/include
+#LIBS+=-L/root/opencv/lib -lopencv_core -lopencv_highgui \
 #-lopencv_objdetect -lopencv_imgproc -lopencv_ml -lopencv_highgui \
 # -lopencv_video  -lopencv_videostab -lopencv_videoio
 LIBS+= -lopencv_core -lopencv_highgui \
