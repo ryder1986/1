@@ -16,14 +16,29 @@ import time
 input_image_file= '../../test.avi'
 #input_image_file= 'rtsp://192.168.1.80:554/av0_1'
 #tiny_yolo_graph_file= './graph'
-tiny_yolo_graph_file= '/media/216/root/repo-github/graph'
+
 
 # Tiny Yolo assumes input images are these dimensions.
+
+tiny_yolo_graph_file= '/media/216/root/repo-github/graph'
 NETWORK_IMAGE_WIDTH = 448
 NETWORK_IMAGE_HEIGHT = 448
 
 TY_NETWORK_IMAGE_WIDTH = 448
 TY_NETWORK_IMAGE_HEIGHT = 448
+
+
+
+#tiny_yolo_graph_file= '/media/216/root/repo-github/graph-v2'
+
+#NETWORK_IMAGE_WIDTH = 416
+#NETWORK_IMAGE_HEIGHT = 416
+
+#TY_NETWORK_IMAGE_WIDTH = 416
+#TY_NETWORK_IMAGE_HEIGHT = 416
+
+
+
 g_fifo_in = []
 g_fifo_out = []
 g_graph = []
@@ -50,14 +65,14 @@ def filter_objects(inference_result, input_image_width, input_image_height):
     network_classifications = ["aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car",
                                "cat", "chair", "cow", "diningtable", "dog", "horse", "motorbike",
                                "person", "pottedplant", "sheep", "sofa", "train","tvmonitor"]
-
+    print "objs a1"
     # only keep boxes with probabilities greater than this
     probability_threshold = 0.07
 
     num_classifications = len(network_classifications) # should be 20
     grid_size = 7 # the image is a 7x7 grid.  Each box in the grid is 64x64 pixels
     boxes_per_grid_cell = 2 # the number of boxes returned for each grid cell
-
+    print "objs a2"
     # grid_size is 7 (grid is 7x7)
     # num classifications is 20
     # boxes per grid cell is 2
@@ -72,23 +87,24 @@ def filter_objects(inference_result, input_image_width, input_image_height):
 
     # The probability scale factor for each box
     box_prob_scale_factor = np.reshape(inference_result[980:1078], (grid_size, grid_size, boxes_per_grid_cell))
-
+    print "objs a3---->"
     # get the boxes from the results and adjust to be pixel units
     all_boxes = np.reshape(inference_result[1078:], (grid_size, grid_size, boxes_per_grid_cell, 4))
+    print "objs a30"
     boxes_to_pixel_units(all_boxes, input_image_width, input_image_height, grid_size)
-
+    print "objs a31"
     # adjust the probabilities with the scaling factor
     for box_index in range(boxes_per_grid_cell): # loop over boxes
         for class_index in range(num_classifications): # loop over classifications
             all_probabilities[:,:,box_index,class_index] = np.multiply(classification_probabilities[:,:,class_index],box_prob_scale_factor[:,:,box_index])
 
-
+    print "objs a32"
     probability_threshold_mask = np.array(all_probabilities>=probability_threshold, dtype='bool')
     box_threshold_mask = np.nonzero(probability_threshold_mask)
     boxes_above_threshold = all_boxes[box_threshold_mask[0],box_threshold_mask[1],box_threshold_mask[2]]
     classifications_for_boxes_above = np.argmax(all_probabilities,axis=3)[box_threshold_mask[0],box_threshold_mask[1],box_threshold_mask[2]]
     probabilities_above_threshold = all_probabilities[probability_threshold_mask]
-
+    print "objs a33"
     # sort the boxes from highest probability to lowest and then
     # sort the probabilities and classifications to match
     argsort = np.array(np.argsort(probabilities_above_threshold))[::-1]
@@ -96,7 +112,7 @@ def filter_objects(inference_result, input_image_width, input_image_height):
     classifications_for_boxes_above = classifications_for_boxes_above[argsort]
     probabilities_above_threshold = probabilities_above_threshold[argsort]
 
-
+    print "objs a4"
     # get mask for boxes that seem to be the same object
     duplicate_box_mask = get_duplicate_box_mask(boxes_above_threshold)
 
@@ -104,7 +120,7 @@ def filter_objects(inference_result, input_image_width, input_image_height):
     boxes_above_threshold = boxes_above_threshold[duplicate_box_mask]
     classifications_for_boxes_above = classifications_for_boxes_above[duplicate_box_mask]
     probabilities_above_threshold = probabilities_above_threshold[duplicate_box_mask]
-
+    print "objs a5"
     classes_boxes_and_probs = []
     for i in range(len(boxes_above_threshold)):
         classes_boxes_and_probs.append([network_classifications[classifications_for_boxes_above[i]],boxes_above_threshold[i][0],boxes_above_threshold[i][1],boxes_above_threshold[i][2],boxes_above_threshold[i][3],probabilities_above_threshold[i]])
@@ -229,7 +245,11 @@ def get_objects1(source_image, filtered_objects, w,h):
 
     x_ratio = float(source_image_width) / NETWORK_IMAGE_WIDTH
     y_ratio = float(source_image_height) / NETWORK_IMAGE_HEIGHT
+#    start_time = time.time()
 
+#frame_count = frame_count + 1
+
+#frames_per_second = frame_count / (end_time - start_time)
     # loop through each box and draw it on the image along with a classification label
     print('Found this many objects in the image: ' + str(len(filtered_objects)))
     objs=[];
@@ -631,15 +651,27 @@ def process1(picture,width,height):
     global g_graph
     global g_fifo_in
     global g_fifo_out
+    start_time = time.time()
+    print "start time:" + str(start_time)
+  #  sys.stdout.flush()
     input_image = picture
+    print "objs 1"
     input_image = cv2.resize(input_image, (NETWORK_IMAGE_WIDTH, NETWORK_IMAGE_HEIGHT), cv2.INTER_LINEAR)
     input_image = input_image.astype(np.float32)
+    print "objs 2"
     input_image = np.divide(input_image, 255.0)
     input_image = input_image[:, :, ::-1]  # convert to RGB
+
     g_graph.queue_inference_with_fifo_elem(g_fifo_in, g_fifo_out, input_image.astype(np.float32), None)
+    print "objs 3"
     output, userobj = g_fifo_out.read_elem()
+    print "objs 4"
     filtered_objs = filter_objects(output.astype(np.float32), input_image.shape[1], input_image.shape[0])
-    return get_objects1(input_image,filtered_objs,width,height)
+    print "objs cal"
+    objs=get_objects1(input_image,filtered_objs,width,height)
+    print "py done"
+    return objs
+#    return get_objects1(input_image,filtered_objs,width,height)
 def release():
     global g_device
     global g_graph

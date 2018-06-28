@@ -56,12 +56,12 @@ PyObject * call_py(string fun_name,PyObject *pDict,T...args )
     return ret;
 }
 PyObject * convert(Mat frame);
-
+#if 0
 class MovidiusProcessor
 {
     vector <Rect> result;
     PyObject* obj;
-
+    NDArrayConverter *p_cvt;
 public:
     static MovidiusProcessor &get_instance()
     {
@@ -87,10 +87,11 @@ public:
 
         //py_arg_t<PyObject*> test_arg(convert(frame),"O");
 
-        NDArrayConverter cvt;
+        //        NDArrayConverter cvt;
         printf(" (%x)processing  1.1\n",this);fflush(NULL);
+
         PyObject* obj;
-        obj = cvt.toNDArray(frame);
+        obj = p_cvt->toNDArray(frame);
 
 
 
@@ -180,6 +181,7 @@ private:
     {
         // Py_Initialize();
         init();
+        p_cvt=new NDArrayConverter();
         //         // 检查初始化是否成功
         //         if ( !Py_IsInitialized() ) {
         //          //   return -1;
@@ -202,6 +204,7 @@ private:
     }
     ~MovidiusProcessor()
     {
+        delete p_cvt;
         Py_DECREF(pName);
         // Py_DECREF(pArgs);
         Py_DECREF(pModule);
@@ -255,5 +258,206 @@ private:
     PyObject *pName,*pModule,*pDict;
 
 };
+#else
 
+
+
+class MovidiusProcessor
+{
+    vector <Rect> result;
+    PyObject* obj;
+    NDArrayConverter *p_cvt;
+    PyThreadState *st;
+public:
+    static MovidiusProcessor &get_instance()
+    {
+        static MovidiusProcessor pro;
+        return pro;
+    }
+
+    void process(Mat frame,vector <Rect> &rst)
+    {
+        printf(" (%x)processing  request a frame \n",this);fflush(NULL);
+        frame_lock.lock();
+
+        //   st= PyEval_SaveThread();
+       //       Py_Initialize(); //初始化Python环境
+        //     PyEval_AcquireLock();
+      //     PyEval_AcquireLock();
+      //  init();
+//PyEval_AcquireLock();
+//        Py_BEGIN_ALLOW_THREADS;
+//        Py_BLOCK_THREADS;
+    /**************************以下加入需要调用的python脚本代码  Begin***********************/
+
+        result.clear();
+        PyObject* obj;
+        obj = p_cvt->toNDArray(frame);
+        py_arg_t<PyObject*> test_arg(obj,"O");
+         printf("convert done "); ;fflush(NULL);
+        PyObject* rect_data;
+        PyObject* ret_objs;
+        py_arg_t<int> arg_w(frame.cols,"l");
+        py_arg_t<int> arg_h(frame.rows,"l");
+            printf("start call py"); ;fflush(NULL);
+        rect_data= call_py("process1",pDict,test_arg,arg_w,arg_h);
+        PyArg_Parse(rect_data, "O!", &PyList_Type, &ret_objs);
+        int size=PyList_Size(ret_objs);
+        //    int size=0;
+        printf("-----------get object rects: %d-----------\n",size/4);;fflush(NULL);
+
+        rst.clear();
+        int i,j;
+        for(i=0;i<size/4;i++){
+            for(j=0;j<4;j++){
+                int t;
+                //PyArg_Parse(rect_data, "i", &PyList_Type, &ret_objs[i*4+j]);
+                //   PyArg_Parse(&ret_objs[i*4+j], "i", &t);
+
+                //   PyList_GetItem(ret_objs,i*4+j);
+                t=PyInt_AsLong(PyList_GetItem(ret_objs,i*4+j));
+                printf("%d,",t);
+            }
+
+            int x,y,w,h;
+            x=PyInt_AsLong(PyList_GetItem(ret_objs,i*4+0));
+            y=PyInt_AsLong(PyList_GetItem(ret_objs,i*4+1));
+            w=PyInt_AsLong(PyList_GetItem(ret_objs,i*4+2));
+            h=PyInt_AsLong(PyList_GetItem(ret_objs,i*4+3));
+            printf("-----\n");
+            rst.push_back(Rect(x,y,w,h));
+        }
+        printf(" (%x)processing  3\n",this);fflush(NULL);
+        /**************************以下加入需要调用的python脚本代码  End***********************/
+//            Py_UNBLOCK_THREADS;
+//            Py_END_ALLOW_THREADS;
+
+//PyEval_ReleaseLock();
+// PyEval_ReleaseLock() ;
+   //   PyEval_RestoreThread(st);
+
+       // release();
+        frame_lock.unlock();
+    }
+
+    vector <Rect> get_rects()
+    {
+        return result;
+    }
+
+private:
+    MovidiusProcessor()
+    {
+
+           init();
+// init_thread_py();
+    }
+    ~MovidiusProcessor()
+    {
+
+            release();
+//release_thread_py();
+
+    }
+    void release()
+    {
+//        delete p_cvt;
+        call_py("release",pDict);
+        Py_DECREF(pName);
+        // Py_DECREF(pArgs);
+        Py_DECREF(pModule);
+        Py_DECREF(pDict);
+
+        // 关闭Python
+        Py_Finalize();
+
+    }
+    void *init_py()
+    {
+
+            Py_Initialize(); //初始化Python环境
+            if ( !Py_IsInitialized() ) //检测是否初始化成功
+            {
+                return NULL;
+            }
+            else
+            {
+                PyEval_InitThreads();     //开启多线程支持
+                int nInit = PyEval_ThreadsInitialized();  //检测线程支持是否开启成功
+                if ( nInit )
+                {
+               //     PyEval_SaveThread();  //因为调用PyEval_InitThreads成功后，当前线程就拥有了GIL，释放当前线程的GIL，
+                }
+            }
+
+    }
+
+    void init_thread_py()
+    {
+        // 初始化
+        Py_Initialize();
+        // 初始化线程支持
+        PyEval_InitThreads();
+        // 启动子线程前执行，为了释放PyEval_InitThreads获得的全局锁，否则子线程可能无法获取到全局锁。
+        PyEval_ReleaseThread(PyThreadState_Get());
+    }
+
+    void release_thread_py()
+    {
+        // 保证子线程调用都结束后
+        PyGILState_Ensure();
+        Py_Finalize();
+    }
+
+    void init()
+    {
+     //   init_thread_py();
+ //          init_py();
+       Py_Initialize();
+//   PyEval_InitThreads();
+//      int nInit = PyEval_ThreadsInitialized();
+        if ( !Py_IsInitialized() ) {
+            printf("init err\n");
+        }else{
+            printf("init ok\n");
+        }
+        p_cvt=new NDArrayConverter();
+        printf("finding ...\n");
+
+        //          PyRun_SimpleString( "import sys");
+        //          PyRun_SimpleString("sys.path.append('./')");
+
+        pName = PyString_FromString("movidius");
+
+
+        if(!pName){
+            printf("finding err \n");fflush(NULL);
+        }else{
+            printf("finding ok \n");fflush(NULL);
+        }
+
+        pModule = PyImport_Import(pName);
+        if ( !pModule ) {
+            printf("can't find .py");fflush(NULL);
+        }else{
+            printf("py found\n");fflush(NULL);
+        }
+        pDict = PyModule_GetDict(pModule);
+        if ( !pDict ) {
+            printf("can't find dict");fflush(NULL);
+        }else{
+            printf("dict found\n");fflush(NULL);
+        }
+        //  this_thread::sleep_for(chrono::microseconds(3000000));
+        call_py("init",pDict);
+
+    }
+
+    mutex frame_lock;
+    PyObject *pName,*pModule,*pDict;
+
+};
+
+
+#endif
 #endif // MOVIDIUSPROCESSOR_H

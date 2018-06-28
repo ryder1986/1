@@ -232,6 +232,6 @@ PyObject* NDArrayConverter::toNDArray(const cv::Mat& m)
     }
      printf(" (%x)convert 2\n",this);fflush(NULL);
     p->addref();
-     printf(" (%x)convert 3\n",this);fflush(NULL);
+     printf(" (%x)convert 3... \n",this);fflush(NULL);
     return pyObjectFromRefcount(p->refcount);
 }

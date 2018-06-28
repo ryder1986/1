@@ -39,8 +39,8 @@ public:
         decode(cfg);
         for(DataPacket p:private_data.channels){
 //            if(p.get_string("selected_alg")=="pvd_c4")
-         pros.push_back(new PvdC4Processor(p.get_pkt("pvd_c4")));
-          //         pros.push_back(new PvdMvncProcessor(p.get_pkt("pvd_c4")));
+      //     pros.push_back(new PvdC4Processor(p.get_pkt("pvd_c4")));
+                 pros.push_back(new PvdMvncProcessor(p.get_pkt("pvd_c4")));
                  // pros.push_back(new PvdHogProcessor(p.get_pkt("pvd_c4")));
         }
         src=new VideoSource(private_data.url);
