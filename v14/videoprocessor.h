@@ -31,7 +31,7 @@ public:
 #if 1
     VideoProcessor(DataPacket pkt):JsonDataDealer()
     {
-         decode(pkt);
+         set_config(pkt);
     }
 #else
     VideoProcessor(DataPacket pkt):JsonDataDealer(pkt)
@@ -70,7 +70,7 @@ public:
     {
     }
 
-    void decode(DataPacket pkt)
+    void set_config(DataPacket pkt)
     {
         private_data.scale_ratio=atof((pkt.get_string("ratio").data()));
         private_data.scan_step=pkt.get_int("step");
@@ -82,14 +82,16 @@ public:
         private_data.area.height=480;
     }
 
-    void encode(DataPacket &pkt)
+    DataPacket get_config()
     {
+        DataPacket pkt;
         pkt.set_int("step",private_data.scan_step);
         string str;
         stringstream ss;
         ss<<private_data.scale_ratio;
         str.append(ss.str());
         pkt.set_string("ratio",str);
+        return pkt;
     }
 //    DataPacket get_config()
 //    {

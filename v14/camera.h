@@ -36,7 +36,7 @@ public:
     Camera(DataPacket cfg,function <void(Camera *,const char *,int)>fc):JsonDataDealer(),quit(false),callback_result(fc)
     {
         DataPacket pkt;    pkt.set_int("step",2);  pkt.set_string("ratio","0.7");
-        decode(cfg);
+        set_config(cfg);
         for(DataPacket p:private_data.channels){
 //            if(p.get_string("selected_alg")=="pvd_c4")
           pros.push_back(new PvdC4Processor(p.get_pkt("pvd_c4")));
@@ -53,13 +53,15 @@ public:
         src=new VideoSource(private_data.url);
     }
 #endif
-    void encode(DataPacket &data)
+    DataPacket get_config()
     {
+        DataPacket data;
         data.set_string("url",private_data.url);
         data.set_array_packet("channels",private_data.channels);
+        return data;
     }
 
-    void decode(DataPacket data)
+    void set_config(DataPacket data)
     {
         private_data.url=data.get_string("url");
         private_data.channels=data.get_array_packet("channels");

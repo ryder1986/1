@@ -1,8 +1,5 @@
 #include <iostream>
 #include "videosource.h"
-#include "testtimer.h"
-#include "testprocess.h"
-#include "testsource.h"
 #include "tool.h"
 #include "app.h"
 using namespace std;

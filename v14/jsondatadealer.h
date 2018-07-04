@@ -7,15 +7,12 @@ template<typename TP>
 class JsonDataDealer{
 protected:
     TP private_data;
+    #define GET_INT_VALUE_FROM_PKT(mem,container) {private_data.mem=container.get_int(#mem);}
 public:
-    virtual void encode(DataPacket &data)=0;
-    virtual void decode(DataPacket data)=0;
-    DataPacket get_config()
-    {
-        DataPacket pkt;
-        encode(pkt);
-        return pkt;
-    }
+//    virtual void encode(DataPacket &data)=0;
+//    virtual void decode(DataPacket data)=0;
+    virtual DataPacket get_config()=0;
+    virtual void set_config(DataPacket pkt)=0;
 
     JsonDataDealer()
     {

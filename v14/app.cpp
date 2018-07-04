@@ -3,7 +3,7 @@
 #include "datapacket.h"
 App::App():str_stream("")
 {
-    decode(cm.get_config());
+    set_config(cm.get_config());
     static Tcpserver server_cmd(stream_cmd,
                             private_data.server_port,
                             bind(&App::process_client_cmd,

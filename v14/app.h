@@ -20,13 +20,14 @@ public:
     }
 
 private:
-    void decode(DataPacket pkt)
+    void set_config(DataPacket pkt)
     {
-        private_data.server_port=pkt.get_int("server_port");
+        GET_INT_VALUE_FROM_PKT(server_port,pkt);
         private_data.cams=pkt.get_array_packet("cameras");
     }
-    void encode(DataPacket &pkt)
+    DataPacket get_config()
     {
+        DataPacket pkt;
         pkt.set_int("server_port",private_data.server_port);
         pkt.set_array_packet("cameras",private_data.cams);
     }
