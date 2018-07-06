@@ -143,7 +143,23 @@ public:
 
 ///
 
-
+typedef struct c4_arg{
+    vector <DataPacket> cameras;
+    int server_port;
+    void decode(DataPacket *p_pkt)
+    {
+        GET_INT_VALUE_FROM_PKT_(this,p_pkt,server_port);
+        GET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,cameras);
+    }
+    DataPacket* encode()
+    {
+        DataPacket pkt;
+        DataPacket *p_pkt=&pkt;
+        SET_INT_VALUE_FROM_PKT_(this,p_pkt,server_port);
+        SET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,cameras);
+        return &pkt;
+    }
+}c4_arg_t;
 class PvdC4Processor : public VideoProcessor
 {
  //   arg_t c4_arg;

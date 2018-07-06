@@ -7,7 +7,8 @@ LogFile Tool1::log_file1;
 int main()
 {
     prt(info,"app start");
-    App app;
+    ConfigManager cm;
+    App app(&cm);
     app.start();
     while(1)
     {

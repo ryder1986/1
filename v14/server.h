@@ -1,6 +1,6 @@
 #ifndef SERVER_H
 #define SERVER_H
-
+#include "tool.h"
 #include "socket.h"
 class Tcpserver{
     function <void(Session *,char *,int)>fct;
@@ -96,7 +96,7 @@ public:
     LocationService()
     {
         fd=Socket::CreatBroadcast(12348);
-        printf("start\n");fflush(NULL);
+        prt(info,"start location");
         thread([this](){
 
             while(1){

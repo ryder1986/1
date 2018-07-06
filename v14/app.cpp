@@ -1,9 +1,11 @@
 #include "app.h"
 #include "configmanager.h"
 #include "datapacket.h"
-App::App():str_stream("")
+//App::App():str_stream("")
+App::App(ConfigManager *p_config_manager):str_stream(""),JsonDataDealer<app_arg_t>(p_config_manager->get_config()),lservice()
 {
-    set_config(cm.get_config());
+    p_cm=p_config_manager;
+    //set_config(cm.get_config());
     static Tcpserver server_cmd(stream_cmd,
                             private_data.server_port,
                             bind(&App::process_client_cmd,
@@ -38,12 +40,12 @@ void App::process_client_cmd(Session *clt, char *data, int len)
         DataPacket data(valid_buf);
         string cmd=data.get_string("cmd");
         if(cmd=="set config"){
-            cm.set_config(data.get_string("data"));
+            p_cm->set_config(data.get_string("data"));
             restart_all();
         }
 
         if(cmd=="get config"){
-            DataPacket cfg=  cm.get_config();
+            DataPacket cfg=  p_cm->get_config();
             DataPacket cfg_root;
             cfg_root.set_pkt("config",cfg);
             cfg_root.set_string("cmd",cmd);

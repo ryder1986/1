@@ -7,30 +7,39 @@
 #include "camera.h"
 #include "jsondatadealer.h"
 typedef struct app_arg{
-    vector <DataPacket> cams;
+    vector <DataPacket> cameras;
     int server_port;
+    void decode(DataPacket *p_pkt)
+    {
+        GET_INT_VALUE_FROM_PKT_(this,p_pkt,server_port);
+        GET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,cameras);
+    }
+    DataPacket* encode()
+    {
+        DataPacket pkt;
+        DataPacket *p_pkt=&pkt;
+        SET_INT_VALUE_FROM_PKT_(this,p_pkt,server_port);
+        SET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,cameras);
+        return &pkt;
+    }
 }app_arg_t;
-
 class App:public JsonDataDealer<app_arg_t>
 {
 public:
-    App();
+    App(ConfigManager *p);
     void start()
     {
     }
 
 private:
-    void set_config(DataPacket pkt)
-    {
-        GET_INT_VALUE_FROM_PKT(server_port,pkt);
-        private_data.cams=pkt.get_array_packet("cameras");
-    }
-    DataPacket get_config()
-    {
-        DataPacket pkt;
-        pkt.set_int("server_port",private_data.server_port);
-        pkt.set_array_packet("cameras",private_data.cams);
-    }
+//    void set_config(DataPacket pkt)
+//    {
+//        private_data.decode(&pkt);
+//    }
+//    DataPacket get_config()
+//    {
+//        private_data.encode();
+//    }
     void process_client_cmd(Session *clt,char *data,int len);
     void client_data_request(Session *clt, char *data, int len);
     void process_camera_data(Camera *clt,const char *data,int len);
@@ -41,7 +50,7 @@ private:
     }
     void start_cams()
     {
-        for(DataPacket p:private_data.cams){
+        for(DataPacket p:private_data.cameras){
             cms.push_back(new Camera(p,bind(&App::process_camera_data,
                                             this,placeholders::_1,
                                             placeholders::_2,
@@ -79,9 +88,10 @@ private:
     vector <Session*> *stream_cmd;//clients who connected to our server
     vector <Session*> *stream_output;//client who request our video alg result
     string str_stream;//
-    ConfigManager cm;
     vector <Camera*> cms;
     LocationService lservice;
+    ConfigManager *p_cm;
+
 };
 
 #endif // APP_H

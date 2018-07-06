@@ -71,7 +71,7 @@ class ConfigManager{
 public:
     ConfigManager():db("res/config.json")
     {
-
+        prt(info,"start config");
     }
     ~ConfigManager()
     {

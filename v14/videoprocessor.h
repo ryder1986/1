@@ -18,6 +18,48 @@ typedef struct args{
     int scan_step;
     Rect area;
     int no;
+    string ratio;
+    void decode(DataPacket *p_pkt)
+    {
+        //GET_INT_VALUE_FROM_PKT_(this,p_pkt,server_port);
+        //GET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,cameras);
+
+
+
+    }
+    DataPacket* encode()
+    {
+        DataPacket pkt;
+        DataPacket *p_pkt=&pkt;
+
+
+        SET_STRING_VALUE_FROM_PKT_(this,p_pkt,ratio);
+        return &pkt;
+    }
+
+    void set_config(DataPacket pkt)
+    {
+//        private_data.scale_ratio=atof((pkt.get_string("ratio").data()));
+//        private_data.scan_step=pkt.get_int("step");
+//        vector <DataPacket> area=pkt.get_array_packet("detect_area");
+//        private_data.area=area_2_rect(area);
+//        private_data.area.x=0;
+//        private_data.area.y=0;
+//        private_data.area.width=640;
+//        private_data.area.height=480;
+    }
+
+    DataPacket get_config()
+    {
+        DataPacket pkt;
+//        pkt.set_int("step",private_data.scan_step);
+//        string str;
+//        stringstream ss;
+//        ss<<private_data.scale_ratio;
+//        str.append(ss.str());
+//        pkt.set_string("ratio",str);
+        return pkt;
+    }
 }arg_t;
 }
 using namespace VideoProcessorNS;
@@ -25,13 +67,13 @@ class VideoProcessor:public JsonDataDealer<arg_t>
 {
 
 protected:
-  //  arg_t arg;
+    //  arg_t arg;
 public:
     string alg_rst;
 #if 1
     VideoProcessor(DataPacket pkt):JsonDataDealer()
     {
-         set_config(pkt);
+        set_config(pkt);
     }
 #else
     VideoProcessor(DataPacket pkt):JsonDataDealer(pkt)
@@ -43,7 +85,37 @@ public:
     {
         return channel_id;
     }
+    void set_config(DataPacket pkt)
+    {
+        private_data.scale_ratio=string2f(pkt.get_string("ratio"));
+        private_data.scan_step=pkt.get_int("step");
+        vector <DataPacket> area=pkt.get_array_packet("detect_area");
+        private_data.area=area_2_rect(area);
+        private_data.area.x=0;
+        private_data.area.y=0;
+        private_data.area.width=640;
+        private_data.area.height=480;
+    }
 
+    float string2f(string str)
+    {
+        return atof(str.data());
+    }
+    string f2string(float f)
+    {
+        stringstream ss;
+        ss<<f;
+        str.append(ss.str());
+        return ss;
+    }
+
+    DataPacket get_config()
+    {
+        DataPacket pkt;
+        pkt.set_int("step",private_data.scan_step);
+        pkt.set_string("ratio",f2string(private_data.scale_ratio));
+        return pkt;
+    }
     virtual  bool process( Mat img)
     {
         return false;
@@ -70,35 +142,12 @@ public:
     {
     }
 
-    void set_config(DataPacket pkt)
-    {
-        private_data.scale_ratio=atof((pkt.get_string("ratio").data()));
-        private_data.scan_step=pkt.get_int("step");
-        vector <DataPacket> area=pkt.get_array_packet("detect_area");
-        private_data.area=area_2_rect(area);
-        private_data.area.x=0;
-        private_data.area.y=0;
-        private_data.area.width=640;
-        private_data.area.height=480;
-    }
-
-    DataPacket get_config()
-    {
-        DataPacket pkt;
-        pkt.set_int("step",private_data.scan_step);
-        string str;
-        stringstream ss;
-        ss<<private_data.scale_ratio;
-        str.append(ss.str());
-        pkt.set_string("ratio",str);
-        return pkt;
-    }
-//    DataPacket get_config()
-//    {
-//        DataPacket ret;
-//        encode(ret);
-//        return ret;
-//    }
+    //    DataPacket get_config()
+    //    {
+    //        DataPacket ret;
+    //        encode(ret);
+    //        return ret;
+    //    }
     Rect area_2_rect(vector<DataPacket> area)
     {
         int x_min=10000;
