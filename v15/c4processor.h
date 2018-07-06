@@ -21,6 +21,10 @@
 typedef struct c4_arg{
     vector <DataPacket> cameras;
     int server_port;
+    int scan_step;
+    Rect area;
+    int no;
+    string ratio;
     void decode(DataPacket *p_pkt)
     {
         GET_INT_VALUE_FROM_PKT_(this,p_pkt,server_port);
@@ -35,7 +39,7 @@ typedef struct c4_arg{
         return &pkt;
     }
 }c4_arg_t;
-class PvdC4Processor : public VideoProcessor
+class PvdC4Processor : public VideoProcessor<c4_arg_t>
 {
  //   arg_t c4_arg;
     typedef struct process_result{
@@ -62,7 +66,7 @@ public:
     //    get_config();
         loaded=false;
         p_scanner=new DetectionScanner(HUMAN_height,HUMAN_width,HUMAN_xdiv,
-                                       HUMAN_ydiv,256,private_data.scale_ratio);
+                                       HUMAN_ydiv,256,string2f(private_data.ratio));
         tracker=new CTracker(0.2f, 0.1f, 60.0f,
                              KALMAN_LOST_FRAME_THREDHOLD,
                              KALMAN_TRACE_LEN);
@@ -238,7 +242,7 @@ private:
         ds.LoadDetector(types,upper_bounds,filenames);
         // You can adjust these parameters for different speed, accuracy etc
         //   ds.cascade->nodes[0]->thresh += 0.8;
-        ds.cascade->nodes[0]->thresh += private_data.scale_ratio;
+        ds.cascade->nodes[0]->thresh += string2f(private_data.ratio);
         ds.cascade->nodes[1]->thresh -= 0.095;
     }
 

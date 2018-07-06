@@ -63,7 +63,8 @@ typedef struct args{
 }arg_t;
 }
 using namespace VideoProcessorNS;
-class VideoProcessor:public JsonDataDealer<arg_t>
+template <typename T>
+class VideoProcessor:public JsonDataDealer<T>
 {
 
 protected:
@@ -71,7 +72,7 @@ protected:
 public:
     string alg_rst;
 #if 1
-    VideoProcessor(DataPacket pkt):JsonDataDealer()
+    VideoProcessor(DataPacket pkt):JsonDataDealer<T>()
     {
         set_config(pkt);
     }
@@ -87,14 +88,14 @@ public:
     }
     void set_config(DataPacket pkt)
     {
-        private_data.scale_ratio=string2f(pkt.get_string("ratio"));
-        private_data.scan_step=pkt.get_int("step");
-        vector <DataPacket> area=pkt.get_array_packet("detect_area");
-        private_data.area=area_2_rect(area);
-        private_data.area.x=0;
-        private_data.area.y=0;
-        private_data.area.width=640;
-        private_data.area.height=480;
+//        private_data.scale_ratio=string2f(pkt.get_string("ratio"));
+//        private_data.scan_step=pkt.get_int("step");
+//        vector <DataPacket> area=pkt.get_array_packet("detect_area");
+//        private_data.area=area_2_rect(area);
+//        private_data.area.x=0;
+//        private_data.area.y=0;
+//        private_data.area.width=640;
+//        private_data.area.height=480;
     }
 
     float string2f(string str)
@@ -112,8 +113,8 @@ public:
     DataPacket get_config()
     {
         DataPacket pkt;
-        pkt.set_int("step",private_data.scan_step);
-        pkt.set_string("ratio",f2string(private_data.scale_ratio));
+//        pkt.set_int("step",private_data.scan_step);
+//        pkt.set_string("ratio",f2string(private_data.scale_ratio));
         return pkt;
     }
     virtual  bool process( Mat img)

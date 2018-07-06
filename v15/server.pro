@@ -7,25 +7,25 @@ CONFIG -= qt
 INCLUDEPATH +=cppjson/include
 #INCLUDEPATH+=/root/source/opencv/build/__install/include
 SOURCES += main.cpp tool.cpp server.cpp cppjson/json_reader.cpp cppjson/json_writer.cpp  cppjson/json_value.cpp \
-    configmanager.cpp videosource.cpp c4common.cpp c4processor.cpp \
-    pvdobject.cpp hogprocessor.cpp \
+    configmanager.cpp videosource.cpp c4common.cpp \
+    pvdobject. \
     camera.cpp \
     conversion.cpp \
     movidiusprocessor.cpp \
     socket.cpp \
     app.cpp \
-    pvdmvncprocessor.cpp
+     c4processor.cpp #pvdmvncprocessor.cpp cpp hogprocessor.cpp
 HEADERS+=tool.h server.h \
     app.h \
     configmanager.h videosource.h c4common.h \
-    c4processor.h  hogprocessor.h \
+     \
     camera.h \
     conversion.h \
     movidiusprocessor.h \
     datapacket.h \
     socket.h \
     jsondatadealer.h \
-    pvdmvncprocessor.h
+      c4processor.h #pvdmvncprocessor.h  hogprocessor.h
 DEFINES+=IS_UNIX
 LIBS+=-lpthread
 

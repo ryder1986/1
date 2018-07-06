@@ -6,7 +6,6 @@
 #include "videosource.h"
 #include "c4processor.h"
 #include "videoprocessor.h"
-#include "hogprocessor.h"
 #include "datapacket.h"
 #include "jsondatadealer.h"
 typedef struct CameraArg{
