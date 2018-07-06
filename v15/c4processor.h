@@ -39,7 +39,8 @@ typedef struct c4_arg{
         return &pkt;
     }
 }c4_arg_t;
-class PvdC4Processor : public VideoProcessor<c4_arg_t>
+
+class PvdC4Processor : public VideoProcessor,public JsonDataDealer<c4_arg_t>
 {
  //   arg_t c4_arg;
     typedef struct process_result{
@@ -61,7 +62,7 @@ public:
 
     }
 
-    PvdC4Processor(DataPacket pkt):VideoProcessor(pkt)
+    PvdC4Processor(DataPacket pkt):VideoProcessor(pkt),JsonDataDealer<c4_arg_t>()
     {
     //    get_config();
         loaded=false;

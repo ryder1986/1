@@ -8,24 +8,24 @@ INCLUDEPATH +=cppjson/include
 #INCLUDEPATH+=/root/source/opencv/build/__install/include
 SOURCES += main.cpp tool.cpp server.cpp cppjson/json_reader.cpp cppjson/json_writer.cpp  cppjson/json_value.cpp \
     configmanager.cpp videosource.cpp c4common.cpp \
-    pvdobject. \
+    pvdobject.cpp \
     camera.cpp \
-    conversion.cpp \
-    movidiusprocessor.cpp \
+    \
+     \
     socket.cpp \
     app.cpp \
-     c4processor.cpp #pvdmvncprocessor.cpp cpp hogprocessor.cpp
+     c4processor.cpp #pvdmvncprocessor.cpp cpp hogprocessor.cpp conversion.cpp movidiusprocessor.cpp
 HEADERS+=tool.h server.h \
     app.h \
     configmanager.h videosource.h c4common.h \
-     \
+      pvdobject.h\
     camera.h \
-    conversion.h \
-    movidiusprocessor.h \
+     \
+    \
     datapacket.h \
     socket.h \
     jsondatadealer.h \
-      c4processor.h #pvdmvncprocessor.h  hogprocessor.h
+      c4processor.h #pvdmvncprocessor.h  hogprocessor.h conversion.h  movidiusprocessor.h
 DEFINES+=IS_UNIX
 LIBS+=-lpthread
 
@@ -51,7 +51,7 @@ LIBS+= -lopencv_core -lopencv_highgui \
 -lopencv_objdetect -lopencv_imgproc -lopencv_ml -lopencv_highgui\
  -lopencv_video -lpthread
 
-
+INCLUDEPATH+=/root/repo-github/demos/opencv-player/build/linux32/res/include/
 LIBS+=-lavcodec -lavformat -lavutil -lswresample
 INCLUDEPATH+=track
 SOURCES +=track/Ctracker.cpp track/HungarianAlg.cpp  track/Kalman.cpp

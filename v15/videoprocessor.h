@@ -63,8 +63,7 @@ typedef struct args{
 }arg_t;
 }
 using namespace VideoProcessorNS;
-template <typename T>
-class VideoProcessor:public JsonDataDealer<T>
+class VideoProcessor
 {
 
 protected:
@@ -72,7 +71,7 @@ protected:
 public:
     string alg_rst;
 #if 1
-    VideoProcessor(DataPacket pkt):JsonDataDealer<T>()
+    VideoProcessor(DataPacket pkt)
     {
         set_config(pkt);
     }
