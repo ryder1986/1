@@ -11,6 +11,19 @@
 typedef struct CameraArg{
     string url;
     vector <DataPacket >channels;
+    void decode(DataPacket *p_pkt)
+    {
+        GET_STRING_VALUE_FROM_PKT_(this,p_pkt,url);
+        GET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,channels);
+    }
+    DataPacket* encode()
+    {
+        DataPacket pkt;
+        DataPacket *p_pkt=&pkt;
+        SET_STRING_VALUE_FROM_PKT_(this,p_pkt,url);
+        SET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,channels);
+        return &pkt;
+    }
 }CameraArg_t;
 class Camera:JsonDataDealer<CameraArg_t>
 {
@@ -32,7 +45,7 @@ public:
     //        //      pro=new PvdHogProcessor(pkt);
     //    }
 #if 1
-    Camera(DataPacket cfg,function <void(Camera *,const char *,int)>fc):JsonDataDealer(),quit(false),callback_result(fc)
+    Camera(DataPacket cfg,function <void(Camera *,const char *,int)>fc):JsonDataDealer(cfg),quit(false),callback_result(fc)
     {
         DataPacket pkt;    pkt.set_int("step",2);  pkt.set_string("ratio","0.7");
         set_config(cfg);

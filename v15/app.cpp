@@ -1,8 +1,8 @@
 #include "app.h"
 #include "configmanager.h"
 #include "datapacket.h"
-//App::App():str_stream("")
-App::App(ConfigManager *p_config_manager):str_stream(""),JsonDataDealer<app_arg_t>(p_config_manager->get_config()),lservice()
+App::App(ConfigManager *p_config_manager):str_stream(""),
+    JsonDataDealer<app_arg_t>(p_config_manager->get_config()),lservice()
 {
     p_cm=p_config_manager;
     //set_config(cm.get_config());
@@ -81,6 +81,5 @@ void App::process_camera_data(Camera *clt, const char *data, int len)
     int fd=Socket::UdpCreateSocket(5000);
     Socket::UdpSendData(fd,"192.168.1.216",12346,data,len);
     close(fd);
-
 }
 

@@ -19,23 +19,21 @@
 
 
 typedef struct c4_arg{
-    vector <DataPacket> cameras;
-    int server_port;
     int scan_step;
     Rect area;
     int no;
     string ratio;
     void decode(DataPacket *p_pkt)
     {
-        GET_INT_VALUE_FROM_PKT_(this,p_pkt,server_port);
-        GET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,cameras);
+        GET_INT_VALUE_FROM_PKT_(this,p_pkt,scan_step);
+        GET_STRING_VALUE_FROM_PKT_(this,p_pkt,ratio);
     }
     DataPacket* encode()
     {
         DataPacket pkt;
         DataPacket *p_pkt=&pkt;
-        SET_INT_VALUE_FROM_PKT_(this,p_pkt,server_port);
-        SET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,cameras);
+        SET_INT_VALUE_FROM_PKT_(this,p_pkt,scan_step);
+        SET_STRING_VALUE_FROM_PKT_(this,p_pkt,ratio);
         return &pkt;
     }
 }c4_arg_t;
@@ -57,12 +55,18 @@ class PvdC4Processor : public VideoProcessor,public JsonDataDealer<c4_arg_t>
     }m_result;
 
 public:
-    void decode_data()
+    float string2f(string str)
     {
-
+        return atof(str.data());
     }
+    string f2string(float f)
+    {
+        stringstream ss;
+        ss<<f;
 
-    PvdC4Processor(DataPacket pkt):VideoProcessor(pkt),JsonDataDealer<c4_arg_t>()
+        return ss.str();
+    }
+    PvdC4Processor(DataPacket pkt):VideoProcessor(),JsonDataDealer<c4_arg_t>(pkt)
     {
     //    get_config();
         loaded=false;

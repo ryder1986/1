@@ -32,14 +32,6 @@ public:
     }
 
 private:
-//    void set_config(DataPacket pkt)
-//    {
-//        private_data.decode(&pkt);
-//    }
-//    DataPacket get_config()
-//    {
-//        private_data.encode();
-//    }
     void process_client_cmd(Session *clt,char *data,int len);
     void client_data_request(Session *clt, char *data, int len);
     void process_camera_data(Camera *clt,const char *data,int len);
@@ -91,7 +83,6 @@ private:
     vector <Camera*> cms;
     LocationService lservice;
     ConfigManager *p_cm;
-
 };
 
 #endif // APP_H

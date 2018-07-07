@@ -88,10 +88,5 @@ private:
     int port_cmd;
     int port_output;
 };
-//class ConfigManager
-//{
-//public:
-//    ConfigManager();
-//};
 
 #endif // CONFIGMANAGER_H

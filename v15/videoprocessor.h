@@ -71,9 +71,9 @@ protected:
 public:
     string alg_rst;
 #if 1
-    VideoProcessor(DataPacket pkt)
+    VideoProcessor()
     {
-        set_config(pkt);
+
     }
 #else
     VideoProcessor(DataPacket pkt):JsonDataDealer(pkt)
@@ -97,17 +97,7 @@ public:
 //        private_data.area.height=480;
     }
 
-    float string2f(string str)
-    {
-        return atof(str.data());
-    }
-    string f2string(float f)
-    {
-        stringstream ss;
-        ss<<f;
 
-        return ss.str();
-    }
 
     DataPacket get_config()
     {

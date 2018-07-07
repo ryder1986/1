@@ -30,10 +30,10 @@ protected:
     {
         private_data.encode();
     }
-    JsonDataDealer()
-    {
+//    JsonDataDealer()
+//    {
 
-    }
+//    }
     JsonDataDealer(DataPacket pkt)
     {
         prt(info,"decode");
