@@ -17,7 +17,28 @@
 #include "jsondatadealer.h"
 #include "datapacket.h"
 typedef struct processor_arg{
+    int width;
+    int height;
+    int x;
+    int y;
+    void decode(DataPacket *p_pkt)
+    {
+        GET_INT_VALUE_FROM_PKT_(this,p_pkt,width);
+        GET_INT_VALUE_FROM_PKT_(this,p_pkt,height);
+        GET_INT_VALUE_FROM_PKT_(this,p_pkt,x);
+        GET_INT_VALUE_FROM_PKT_(this,p_pkt,y);
 
+    }
+    DataPacket* encode()
+    {
+        DataPacket pkt;
+        DataPacket *p_pkt=&pkt;
+        SET_INT_VALUE_FROM_PKT_(this,p_pkt,width);
+        SET_INT_VALUE_FROM_PKT_(this,p_pkt,height);
+        SET_INT_VALUE_FROM_PKT_(this,p_pkt,x);
+        SET_INT_VALUE_FROM_PKT_(this,p_pkt,y);
+        return &pkt;
+    }
 }processor_arg_t;
 
 typedef struct c4_arg{
