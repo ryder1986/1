@@ -49,12 +49,12 @@ DISTFILES += \
 # -lopencv_video  -lopencv_videostab -lopencv_videoio
 LIBS+= -lopencv_core -lopencv_highgui \
 -lopencv_objdetect -lopencv_imgproc -lopencv_ml -lopencv_highgui\
- -lopencv_video -lpthread
+ -lopencv_video -lopencv_videostab -lpthread
 
 INCLUDEPATH+=/root/repo-github/demos/opencv-player/build/linux32/res/include/
 LIBS+=-lavcodec -lavformat -lavutil -lswresample
 INCLUDEPATH+=track
 SOURCES +=track/Ctracker.cpp track/HungarianAlg.cpp  track/Kalman.cpp
 HEADERS += track/defines.h track/HungarianAlg.h track/Kalman.h track/Ctracker.h
-INCLUDEPATH+=/usr/include/python2.7
-LIBS+=-lpython2.7
+#INCLUDEPATH+=/usr/include/python2.7
+#LIBS+=-lpython2.7
