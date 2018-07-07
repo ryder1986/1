@@ -17,11 +17,7 @@ protected:
 #define SET_STRING_VALUE_FROM_PKT_(container,container_json,mem) {container_json->set_string(#mem,container->mem);}
 #define SET_ARRAY_VALUE_FROM_PKT_(container,container_json,mem) {container_json->set_array_packet(#mem,container->mem);}
 
-    public:
-//    virtual void encode(DataPacket &data)=0;
-//    virtual void decode(DataPacket data)=0;
-//    virtual DataPacket get_config()=0;
-//    virtual void set_config(DataPacket pkt)=0;
+public:
     void set_config(DataPacket pkt)
     {
         private_data.decode(&pkt);
@@ -30,23 +26,9 @@ protected:
     {
         private_data.encode();
     }
-//    JsonDataDealer()
-//    {
-
-//    }
     JsonDataDealer(DataPacket pkt)
     {
-        prt(info,"decode");
         private_data.decode(&pkt);
     }
-    //    JsonDataDealer(DataPacket pkt)
-    //    {
-    //         get_config();
-    //          decode(pkt);
-    //    }
-    //    JsonDataDealer(DataPacket pkt)
-    //    {
-    //        decode(pkt);
-    //    }
 };
 #endif // PVDOBJECT_H

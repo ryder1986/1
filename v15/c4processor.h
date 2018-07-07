@@ -16,7 +16,9 @@
 
 #include "jsondatadealer.h"
 #include "datapacket.h"
+typedef struct processor_arg{
 
+}processor_arg_t;
 
 typedef struct c4_arg{
     int scan_step;
@@ -40,7 +42,6 @@ typedef struct c4_arg{
 
 class PvdC4Processor : public VideoProcessor,public JsonDataDealer<c4_arg_t>
 {
- //   arg_t c4_arg;
     typedef struct process_result{
         int width;
         int height;
@@ -68,7 +69,6 @@ public:
     }
     PvdC4Processor(DataPacket pkt):VideoProcessor(),JsonDataDealer<c4_arg_t>(pkt)
     {
-    //    get_config();
         loaded=false;
         p_scanner=new DetectionScanner(HUMAN_height,HUMAN_width,HUMAN_xdiv,
                                        HUMAN_ydiv,256,string2f(private_data.ratio));

@@ -30,7 +30,6 @@ public:
     void start()
     {
     }
-
 private:
     void process_client_cmd(Session *clt,char *data,int len);
     void client_data_request(Session *clt, char *data, int len);

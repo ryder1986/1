@@ -98,7 +98,6 @@ public:
         fd=Socket::CreatBroadcast(12348);
         prt(info,"start location");
         thread([this](){
-
             while(1){
                 this_thread::sleep_for(chrono::microseconds(100));
                 string peer_ip;
