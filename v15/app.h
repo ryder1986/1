@@ -23,7 +23,7 @@ typedef struct app_arg{
         return &pkt;
     }
 }app_arg_t;
-class App:public JsonDataDealer<app_arg_t>
+class App:public JsonData<app_arg_t>
 {
 public:
     App(ConfigManager *p);

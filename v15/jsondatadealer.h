@@ -4,10 +4,12 @@
 #include "tool.h"
 #include "datapacket.h"
 template<typename TP>
-class JsonDataDealer{
+class JsonData{
 protected:
     TP private_data;
 #define GET_INT_VALUE_FROM_PKT(mem,container) {private_data.mem=container.get_int(#mem);}
+
+#define GET_STRING_VALUE_FROM_PKT(mem,container) (container.get_string(#mem))
 
 #define GET_INT_VALUE_FROM_PKT_(container,container_json,mem) {container->mem=container_json->get_int(#mem);}
 #define GET_STRING_VALUE_FROM_PKT_(container,container_json,mem) {container->mem=container_json->get_string(#mem);}
@@ -26,7 +28,7 @@ public:
     {
         private_data.encode();
     }
-    JsonDataDealer(DataPacket pkt)
+    JsonData(DataPacket pkt)
     {
         private_data.decode(&pkt);
     }

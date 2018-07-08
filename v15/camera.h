@@ -25,20 +25,20 @@ typedef struct CameraArg{
         return &pkt;
     }
 }CameraArg_t;
-class Camera:JsonDataDealer<CameraArg_t>
+class Camera:JsonData<CameraArg_t>
 {
     //  CameraArg_t arg;
     function <void(Camera *,const char *,int)>callback_result;
 public:
-    Camera(DataPacket cfg,function <void(Camera *,const char *,int)>fc):JsonDataDealer(cfg),quit(false),callback_result(fc)
+    Camera(DataPacket cfg,function <void(Camera *,const char *,int)>fc):JsonData(cfg),quit(false),callback_result(fc)
     {
-        DataPacket pkt;    pkt.set_int("step",2);  pkt.set_string("ratio","0.7");
+
         set_config(cfg);
         for(DataPacket p:private_data.channels){
-//            if(p.get_string("selected_alg")=="pvd_c4")
-          pros.push_back(new PvdC4Processor(p.get_pkt("pvd_c4")));
-          //        pros.push_back(new PvdMvncProcessor(p.get_pkt("pvd_c4")));
-                 // pros.push_back(new PvdHogProcessor(p.get_pkt("pvd_c4")));
+            if(GET_STRING_VALUE_FROM_PKT(selected_alg,p)=="pvd_c4")
+                pros.push_back(new PvdC4Processor(p.get_pkt("pvd_c4")));
+            //        pros.push_back(new PvdMvncProcessor(p.get_pkt("pvd_c4")));
+            // pros.push_back(new PvdHogProcessor(p.get_pkt("pvd_c4")));
         }
         src=new VideoSource(private_data.url);
         start();
@@ -82,7 +82,7 @@ public:
                 for(VideoProcessor *pro:pros)
                     pro->process(frame,rcts,area);
                 if(rcts.size()>0){
-                   vector< DataPacket> pkts;
+                    vector< DataPacket> pkts;
                     for(Rect r:rcts){
                         DataPacket p;
                         p.set_int("x",r.x);

@@ -16,34 +16,41 @@
 
 #include "jsondatadealer.h"
 #include "datapacket.h"
-typedef struct processor_arg{
-    int width;
-    int height;
+typedef struct json_point{
     int x;
     int y;
     void decode(DataPacket *p_pkt)
     {
-        GET_INT_VALUE_FROM_PKT_(this,p_pkt,width);
-        GET_INT_VALUE_FROM_PKT_(this,p_pkt,height);
         GET_INT_VALUE_FROM_PKT_(this,p_pkt,x);
         GET_INT_VALUE_FROM_PKT_(this,p_pkt,y);
-
     }
     DataPacket* encode()
     {
         DataPacket pkt;
         DataPacket *p_pkt=&pkt;
-        SET_INT_VALUE_FROM_PKT_(this,p_pkt,width);
-        SET_INT_VALUE_FROM_PKT_(this,p_pkt,height);
         SET_INT_VALUE_FROM_PKT_(this,p_pkt,x);
         SET_INT_VALUE_FROM_PKT_(this,p_pkt,y);
         return &pkt;
     }
-}processor_arg_t;
+}json_point_t;
+typedef struct json_poly{
+    vector <DataPacket> detect_area;
+    void decode(DataPacket *p_pkt)
+    {
+        GET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,detect_area);
+    }
+    DataPacket* encode()
+    {
+        DataPacket pkt;
+        DataPacket *p_pkt=&pkt;
+        SET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,detect_area);
+        return &pkt;
+    }
+}json_poly_t;
 
 typedef struct c4_arg{
     int scan_step;
-    Rect area;
+    //Rect area;
     int no;
     string ratio;
     void decode(DataPacket *p_pkt)
@@ -61,7 +68,7 @@ typedef struct c4_arg{
     }
 }c4_arg_t;
 
-class PvdC4Processor : public VideoProcessor,public JsonDataDealer<c4_arg_t>
+class PvdC4Processor : public VideoProcessor,public JsonData<c4_arg_t>
 {
     typedef struct process_result{
         int width;
@@ -88,7 +95,7 @@ public:
 
         return ss.str();
     }
-    PvdC4Processor(DataPacket pkt):VideoProcessor(),JsonDataDealer<c4_arg_t>(pkt)
+    PvdC4Processor(DataPacket pkt):VideoProcessor(),JsonData<c4_arg_t>(pkt)
     {
         loaded=false;
         p_scanner=new DetectionScanner(HUMAN_height,HUMAN_width,HUMAN_xdiv,
@@ -117,7 +124,7 @@ public:
         r.height=img_src.rows;
 
         //  Mat img=img_src(detect_area);
-        private_data.area=detect_area;
+      //  private_data.area=detect_area;
     //    Mat img=img_src(private_data.area);
         Mat img=img_src;
          if(real_process(img,r)){

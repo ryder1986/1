@@ -2,7 +2,7 @@
 #include "configmanager.h"
 #include "datapacket.h"
 App::App(ConfigManager *p_config_manager):str_stream(""),
-    JsonDataDealer<app_arg_t>(p_config_manager->get_config()),lservice()
+    JsonData<app_arg_t>(p_config_manager->get_config()),lservice()
 {
     p_cm=p_config_manager;
     //set_config(cm.get_config());
