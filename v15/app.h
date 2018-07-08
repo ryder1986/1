@@ -9,6 +9,11 @@
 typedef struct app_arg{
     vector <DataPacket> cameras;
     int server_port;
+    DataPacket config;
+    app_arg(DataPacket pkt)
+    {
+       config=pkt;
+    }
     void decode(DataPacket *p_pkt)
     {
         GET_INT_VALUE_FROM_PKT_(this,p_pkt,server_port);
@@ -16,11 +21,10 @@ typedef struct app_arg{
     }
     DataPacket* encode()
     {
-        DataPacket pkt;
-        DataPacket *p_pkt=&pkt;
+        DataPacket *p_pkt=&config;
         SET_INT_VALUE_FROM_PKT_(this,p_pkt,server_port);
         SET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,cameras);
-        return &pkt;
+        return p_pkt;
     }
 }app_arg_t;
 class App:public JsonData<app_arg_t>

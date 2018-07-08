@@ -28,7 +28,7 @@ public:
     {
         private_data.encode();
     }
-    JsonData(DataPacket pkt)
+    JsonData(DataPacket pkt):private_data(pkt)
     {
         private_data.decode(&pkt);
     }

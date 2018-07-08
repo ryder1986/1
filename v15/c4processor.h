@@ -53,6 +53,12 @@ typedef struct c4_arg{
     //Rect area;
     int no;
     string ratio;
+    DataPacket config;
+    c4_arg(DataPacket pkt)
+    {
+        config=pkt;
+    }
+
     void decode(DataPacket *p_pkt)
     {
         GET_INT_VALUE_FROM_PKT_(this,p_pkt,scan_step);
@@ -60,11 +66,10 @@ typedef struct c4_arg{
     }
     DataPacket* encode()
     {
-        DataPacket pkt;
-        DataPacket *p_pkt=&pkt;
+        DataPacket *p_pkt=&config;
         SET_INT_VALUE_FROM_PKT_(this,p_pkt,scan_step);
         SET_STRING_VALUE_FROM_PKT_(this,p_pkt,ratio);
-        return &pkt;
+        return p_pkt;
     }
 }c4_arg_t;
 
@@ -124,10 +129,10 @@ public:
         r.height=img_src.rows;
 
         //  Mat img=img_src(detect_area);
-      //  private_data.area=detect_area;
-    //    Mat img=img_src(private_data.area);
+        //  private_data.area=detect_area;
+        //    Mat img=img_src(private_data.area);
         Mat img=img_src;
-         if(real_process(img,r)){
+        if(real_process(img,r)){
             ret=true;
         }else
             ret=false;
