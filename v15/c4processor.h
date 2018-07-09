@@ -48,13 +48,14 @@ typedef struct json_poly{
     }
 }json_poly_t;
 
-typedef struct c4_arg{
+class PvdC4ProcessorData{
+public:
     int scan_step;
     //Rect area;
     int no;
     string ratio;
     DataPacket config;
-    c4_arg(DataPacket pkt)
+    PvdC4ProcessorData(DataPacket pkt)
     {
         config=pkt;
     }
@@ -71,9 +72,9 @@ typedef struct c4_arg{
         SET_STRING_VALUE_FROM_PKT_(this,p_pkt,ratio);
         return p_pkt;
     }
-}c4_arg_t;
+};
 
-class PvdC4Processor : public VideoProcessor,public JsonData<c4_arg_t>
+class PvdC4Processor : public VideoProcessor,public JsonData<PvdC4ProcessorData>
 {
     typedef struct process_result{
         int width;
@@ -100,7 +101,7 @@ public:
 
         return ss.str();
     }
-    PvdC4Processor(DataPacket pkt):VideoProcessor(),JsonData<c4_arg_t>(pkt)
+    PvdC4Processor(DataPacket pkt):VideoProcessor(),JsonData(pkt)
     {
         loaded=false;
         p_scanner=new DetectionScanner(HUMAN_height,HUMAN_width,HUMAN_xdiv,

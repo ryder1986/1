@@ -8,28 +8,28 @@
 #include "videoprocessor.h"
 #include "datapacket.h"
 #include "jsondatadealer.h"
-template <typename TP>
-class TT
-{
+//template <typename TP>
+//class TT
+//{
 
-};
-#define CLS(AA,...) \
-class AA{\
-    __VA_ARGS__  DataPacket config; \
-AA(DataPacket pkt){   config=pkt;}\
-  void decode(DataPacket *p_pkt){}  \
-}
+//};
+//#define CLS(AA,...) \
+//class AA{\
+//    __VA_ARGS__  DataPacket config; \
+//AA(DataPacket pkt){   config=pkt;}\
+//  void decode(DataPacket *p_pkt){}  \
+//}
 
-CLS(CameraArg_t1);
-class CameraArg_t
+//CLS(CameraArg_t1);
+class CameraData
 {
 public:
     string url;
     vector <DataPacket >channels;
     DataPacket config;
-    CameraArg_t(DataPacket pkt)
+    CameraData(DataPacket pkt)
     {
-         config=pkt;
+        config=pkt;
     }
 
     void decode(DataPacket *p_pkt)
@@ -45,7 +45,7 @@ public:
         return p_pkt;
     }
 };
-class Camera:JsonData<CameraArg_t>
+class Camera:JsonData<CameraData>
 {
     //  CameraArg_t arg;
     function <void(Camera *,const char *,int)>callback_result;
@@ -53,7 +53,7 @@ public:
     Camera(DataPacket cfg,function <void(Camera *,const char *,int)>fc):JsonData(cfg),quit(false),callback_result(fc)
     {
 
-    //    set_config(cfg);
+        //    set_config(cfg);
         for(DataPacket p:private_data.channels){
             if(GET_STRING_VALUE_FROM_PKT(selected_alg,p)=="pvd_c4")
                 pros.push_back(new PvdC4Processor(p.get_pkt("pvd_c4")));

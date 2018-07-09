@@ -6,11 +6,12 @@
 #include "datapacket.h"
 #include "camera.h"
 #include "jsondatadealer.h"
-typedef struct app_arg{
+class AppData{
+public:
     vector <DataPacket> cameras;
     int server_port;
     DataPacket config;
-    app_arg(DataPacket pkt)
+    AppData(DataPacket pkt)
     {
        config=pkt;
     }
@@ -26,8 +27,8 @@ typedef struct app_arg{
         SET_ARRAY_VALUE_FROM_PKT_(this,p_pkt,cameras);
         return p_pkt;
     }
-}app_arg_t;
-class App:public JsonData<app_arg_t>
+};
+class App:public JsonData<AppData>
 {
 public:
     App(ConfigManager *p);
