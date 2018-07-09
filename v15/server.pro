@@ -49,7 +49,7 @@ DISTFILES += \
 # -lopencv_video  -lopencv_videostab -lopencv_videoio
 LIBS+= -lopencv_core -lopencv_highgui \
 -lopencv_objdetect -lopencv_imgproc -lopencv_ml -lopencv_highgui\
- -lopencv_video -lopencv_videostab -lpthread
+ -lopencv_video   -lpthread
 
 INCLUDEPATH+=/root/repo-github/demos/opencv-player/build/linux32/res/include/
 LIBS+=-lavcodec -lavformat -lavutil -lswresample
